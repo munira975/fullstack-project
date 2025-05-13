@@ -1,2 +1,12 @@
-/server/node_modules/
-/server.env
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Build folders
+dist/
+build/
+
+# Logs
+*.log

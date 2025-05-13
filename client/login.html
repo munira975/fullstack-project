@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fresho Login</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Fresho</h1>
+    <h2>Log in</h2>
+    <form id="loginForm">
+      <input type="email" placeholder="Email" id="email" required />
+      <input type="password" placeholder="Password" id="password" required />
+      <button type="submit">LOG IN</button>
+      <button type="button" onclick="createUser()">SIGN UP</button>
+    </form>
+    <div class="extra-links">
+      <a href="#" onclick="forgotPassword()">Forgot Password?</a>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>

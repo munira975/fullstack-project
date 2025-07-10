@@ -1,63 +1,91 @@
+// server/routes/products.js
 import express from 'express';
-import db from '../db.js';
+import Product from '../models/product.js';
+import Account from '../models/account.js';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    db.query('SELECT * FROM products', (err, results) => {
-        if (err) return res.status(500).json({error: err.message});
-        res.json(results);
-    });
-});
+// PATCH /api/products/:id/heart – toggle hjärta och uppdatera account.wishlist
+router.patch('/:id/heart', async (req, res) => {
+  const email = req.session.user?.email;
+  const productId = req.params.id;
 
-router.get('/:id', (req, res) => {
-    const { id } = req.params;
-    db.query('SELECT * FROM products WHERE id = ?', [id], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (result.length === 0) return res.status(404).json({ message: 'Product not found' });
-        res.json(result[0]);
-    });
-});
+  if (!email) return res.status(401).json({ error: 'Not logged in' });
 
-router.post('/', (req, res) => {
-    const { name, price, stock, category_id } = req.body;
-  
-    if (!name || !price || !category_id) {
-      return res.status(400).json({ message: 'Name, Price, and Category ID are required' });
+  try {
+    const account = await Account.findOne({ email });
+    if (!account) return res.status(404).json({ error: 'Account not found' });
+
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+
+    // Toggle hjärta
+    const isOn = product.hjärta === 'on';
+    product.hjärta = isOn ? 'off' : 'on';
+    await product.save();
+
+    // Lägg till eller ta bort produkt-ID i account.wishlist
+    const index = account.wishlist.indexOf(productId);
+    if (!isOn && index === -1) {
+      account.wishlist.push(productId);
+    } else if (isOn && index !== -1) {
+      account.wishlist.splice(index, 1);
     }
-  
-    db.query(
-        'INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)',
-        [name, price, stock || 0, category_id],
-        (err, result) => {
-          if (err) return res.status(500).json({ error: err.message });
-          res.status(201).json({ id: result.insertId, message: 'Product created successfully' });
-    });
-});
-  
-router.put('/:id', (req, res) => {
-    const { id } = req.params;
-    const { name, price, stock, category_id } = req.body;
-    
-    if (!name || !price || !category_id) {
-      return res.status(400).json({ message: 'Name, Price, and Category ID are required' });
-    }
-    
-    db.query(
-        'UPDATE products SET name = ?, price = ?, stock = ?, category_id = ? WHERE id = ?',
-        [name, price, stock || 0, category_id, id],
-        (err, result) => {
-          if (err) return res.status(500).json({ error: err.message });
-          res.json({ message: 'Product updated successfully' });
-    });
-});  
 
-router.delete('/:id', (req, res) => {
-    const { id } = req.params;
-    db.query('DELETE FROM products WHERE id = ?', [id], (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: 'Product deleted successfully' });
-    });
+    await account.save();
+
+    res.status(200).json({ hjärta: product.hjärta });
+  } catch (err) {
+    console.error('❌ Error toggling heart:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// PATCH /api/products/:id/cart – toggle cart och uppdatera account.cart
+router.patch('/:id/cart', async (req, res) => {
+  const email = req.session.user?.email;
+  const productId = req.params.id;
+
+  if (!email) return res.status(401).json({ error: 'Not logged in' });
+
+  try {
+    const account = await Account.findOne({ email });
+    if (!account) return res.status(404).json({ error: 'Account not found' });
+
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+
+    // Toggle cart
+    const isOn = product.cart === 'on';
+    product.cart = isOn ? 'off' : 'on';
+    await product.save();
+
+    // Lägg till eller ta bort från account.cart
+    const index = account.cart.indexOf(productId);
+    if (!isOn && index === -1) {
+      account.cart.push(productId);
+    } else if (isOn && index !== -1) {
+      account.cart.splice(index, 1);
+    }
+
+    await account.save();
+
+    res.status(200).json({ cart: product.cart });
+  } catch (err) {
+    console.error('❌ Error toggling cart:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/products – hämta alla produkter
+router.get('/', async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.status(200).json(products);
+  } catch (err) {
+    console.error('❌ Error fetching products:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 export default router;

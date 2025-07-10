@@ -1,0 +1,90 @@
+/* === Base Layout === */
+.payment-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding: 40px;
+}
+
+.qr-section,
+.cart-section {
+  flex: 1 1 400px;
+  min-width: 250px;
+  max-width: 45%;
+  border: 1px solid #ccc;
+  padding: 30px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+}
+
+/* === QR Section === */
+.qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.qr-section img {
+  width: 50%;
+  max-width: 250px;
+  height: auto;
+}
+
+.qr-section p {
+  font-size: 18px;
+  margin-top: 15px;
+}
+
+/* === Cart Section === */
+.cart-section h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 16px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.total {
+  font-weight: bold;
+  font-size: 20px;
+  margin-top: 30px;
+  text-align: right;
+}
+
+/* === Small screens (mobile) === */
+@media (max-width: 599px) {
+  .payment-container {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .qr-section,
+  .cart-section {
+    max-width: 100%;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .qr-section img {
+    width: 60%;
+    max-width: 200px;
+  }
+
+  .qr-section p,
+  .cart-section h2,
+  .cart-item,
+  .total {
+    font-size: 14px;
+  }
+}

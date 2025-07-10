@@ -1,0 +1,42 @@
+/* client/account.css */
+body {
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+  background: #f3f3f3;
+}
+
+main {
+  max-width: 500px;
+  margin: auto;
+}
+
+form {
+  background: white;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #ccc;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #28a745;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}

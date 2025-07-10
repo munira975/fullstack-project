@@ -1,0 +1,62 @@
+<!-- client/payment.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fresho - Payment</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="payment.css" />
+  <script src="nav.js" defer></script>
+  <script src="payment.js" defer></script>
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="logo">Fresho</div>
+    <div class="search-container">
+      <input type="text" placeholder="Search Products..." />
+      <span class="search-icon">🔍</span>
+    </div>
+    <div class="user-actions">
+      <span id="userEmail"></span>
+      <a id="accountLink" href="account.html">Account <br /><strong>Login</strong></a>
+      <a href="wishlist.html">Wishlist<br /><strong>My Items</strong></a>
+      <a href="cart.html">Cart<br /><strong>Items</strong></a>
+      <a href="payment.html">Payment</a>
+    </div>
+  </header>
+
+  <!-- Navigation Menu -->
+  <nav class="nav-menu">
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="about.html">About Us</a>
+  </nav>
+
+  <!-- Payment Content -->
+  <main class="payment-container">
+    <!-- Left: Swish QR Code -->
+    <section class="qr-section">
+      <img src="./PAYMENT/swish-QR-small.png" alt="Swish QR Code" />
+      <p>Scan this code using Swish to complete your payment.</p>
+    </section>
+
+    <!-- Right: Cart Items -->
+    <section class="cart-section">
+      <h2>Order Summary</h2>
+      <div id="cartList"></div>
+      <div id="totalPrice" class="total">Total: 0 kr</div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div id="copy">
+      <p>&copy; 2025 Fresho. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

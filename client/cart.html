@@ -1,0 +1,72 @@
+<!-- client/cart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Sid-specifik CSS först -->
+  <link rel="stylesheet" href="cart.css" />
+  <!-- Gemensam layout & header/nav/footer -->
+  <link rel="stylesheet" href="nav.css" />
+
+  <script src="nav.js" defer></script>
+  <title>Fresho - Cart</title>
+</head>
+
+<body>
+  <div class="page">
+    <!-- Top Bar -->
+    <header class="top-bar" role="banner">
+      <div class="logo" aria-label="Fresho logo">Fresho</div>
+
+      <div class="search-container" role="search">
+        <input type="text" placeholder="Search Products…" aria-label="Search products" />
+        <button class="search-icon" aria-label="Search">🔍</button>
+      </div>
+
+      <div class="user-actions" aria-label="User actions">
+        <span id="userEmail" aria-live="polite"></span>
+        <a id="accountLink" href="account.html">Account <br /><strong>Login</strong></a>
+        <a href="wishlist.html">Wishlist<br /><strong>My Items</strong></a>
+        <a href="cart.html" aria-current="page">Cart<br /><strong>Items</strong></a>
+        <a href="payment.html">Payment</a>
+      </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu" role="navigation" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="about.html">About Us</a>
+    </nav>
+
+    <!-- Scrollområdet -->
+    <main>
+      <h1>Your Cart</h1>
+
+      <div class="cart-summary" aria-live="polite">
+        <div class="summary-left">
+          <span id="cartCount">0 items</span>
+          <strong id="cartTotal">0 kr</strong>
+        </div>
+        <div class="summary-right">
+          <button id="clearCartBtn" type="button">Clear Cart</button>
+          <a class="checkoutBtn" href="payment.html">Go to Checkout</a>
+        </div>
+      </div>
+
+      <div id="cartList" class="cart-list"></div>
+    </main>
+
+    <footer role="contentinfo">
+      <div id="copy">
+        <p>&copy; 2025 Fresho. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="cart.js" defer></script>
+</body>
+</html>

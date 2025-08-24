@@ -1,0 +1,81 @@
+/* client/wishlist.css */
+/* OBS: Topbar/Nav/Footer + layout finns i nav.css. Detta är bara sidans innehåll. */
+
+/* Styr bredden på main och centrera (överstyr gridens stretch) */
+.page > main {
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding: 24px 32px 32px;
+  justify-self: center;
+  box-sizing: border-box;
+}
+
+/* Rubrik */
+main > h1 {
+  text-align: center;
+  margin: 8px 0 8px;
+  font-size: 2rem;
+}
+
+/* 5-kolumners grid (matchar products-sidan) */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* Produktkort */
+.product-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+
+.product-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.product-card h3 {
+  font-size: 1.05rem;
+  margin: 10px 0 5px;
+}
+
+.product-card p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Hjärta-ikon */
+.heart-icon {
+  font-size: 24px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s ease;
+  margin-top: auto;
+}
+.heart-icon:hover { transform: scale(1.2); }
+
+/* Responsiv nedskalning av kolumner */
+@media (max-width: 1200px) {
+  .product-list { grid-template-columns: repeat(4, minmax(180px, 1fr)); }
+}
+@media (max-width: 992px) {
+  .product-list { grid-template-columns: repeat(3, minmax(170px, 1fr)); }
+}
+@media (max-width: 768px) {
+  .product-list { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+}
+@media (max-width: 480px) {
+  .product-list { grid-template-columns: 1fr; }
+}

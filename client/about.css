@@ -1,0 +1,63 @@
+/* client/about.css */
+/* OBS: Topbar/Nav/Footer + layout finns i nav.css. Detta är bara sidans innehåll. */
+
+/* Gör main lagom bred och centrerad (samma approach som products-sidan) */
+.page > main {
+  width: min(100%, 1120px);  /* justera vid behov (t.ex. 1200/1280px) */
+  margin-inline: auto;
+  padding: 24px 24px 32px;
+  justify-self: center;      /* överstyr gridens stretch */
+  box-sizing: border-box;
+}
+
+/* Innehållssektion */
+.about-us {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;           /* snyggt fallback på små skärmar */
+}
+
+.text-content {
+  flex: 1 1 420px;
+  max-width: 560px;
+}
+
+.text-content h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.text-content p {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #333;
+  text-align: center;
+}
+
+.team {
+  margin-top: 18px;
+  text-align: center;
+}
+.team h2 {
+  font-size: 1.25rem;
+  margin-bottom: 6px;
+}
+
+.about-image {
+  flex: 1 1 360px;
+  max-width: 560px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e6e6e6;
+}
+
+/* Responsiv finputsning */
+@media (max-width: 600px) {
+  .page > main { padding-inline: 16px; }
+  .text-content h1 { font-size: 1.75rem; }
+}

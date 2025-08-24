@@ -1,0 +1,110 @@
+<!-- client/account.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Sid-specifik CSS först -->
+  <link rel="stylesheet" href="account.css" />
+  <!-- Gemensam header/nav/footer + layout (bara <main> scrollar) -->
+  <link rel="stylesheet" href="nav.css" />
+
+  <script src="nav.js" defer></script>
+  <title>Account - Fresho</title>
+</head>
+<body>
+  <div class="page">
+    <!-- Top Bar -->
+    <header class="top-bar" role="banner">
+      <div class="logo" aria-label="Fresho logo">Fresho</div>
+
+      <div class="search-container" role="search">
+        <input type="text" placeholder="Search Products…" aria-label="Search products" />
+        <button class="search-icon" aria-label="Search">🔍</button>
+      </div>
+
+      <div class="user-actions" aria-label="User actions">
+        <span id="userEmail" aria-live="polite"></span>
+        <a id="accountLink" href="account.html">Account <br /><strong>Login</strong></a>
+        <a href="wishlist.html">Wishlist<br /><strong>My Items</strong></a>
+        <a href="cart.html">Cart<br /><strong>Items</strong></a>
+        <a href="payment.html">Payment</a>
+      </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu" role="navigation" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="about.html">About Us</a>
+    </nav>
+
+    <!-- Scrollområde -->
+    <main>
+      <h1 class="page-title">Fresho — Account</h1>
+
+      <!-- Login Form -->
+      <form id="loginForm" novalidate>
+        <h2>Login</h2>
+
+        <label for="loginEmail" class="sr-only">Email</label>
+        <input type="email" id="loginEmail" name="email" placeholder="Email" autocomplete="email" required />
+
+        <label for="loginPassword" class="sr-only">Password</label>
+        <input type="password" id="loginPassword" name="password" placeholder="Password" autocomplete="current-password" required />
+
+        <button type="submit" id="loginBtn">Login</button>
+      </form>
+
+      <!-- Create Account Form -->
+      <form id="createForm" novalidate>
+        <h2>Create Account</h2>
+
+        <label for="createEmail" class="sr-only">Email</label>
+        <input type="email" id="createEmail" name="email" placeholder="Email" autocomplete="email" required />
+
+        <label for="createPassword" class="sr-only">Password</label>
+        <input type="password" id="createPassword" name="password" placeholder="Password" autocomplete="new-password" required />
+
+        <button type="submit" id="createBtn">Create</button>
+      </form>
+
+      <!-- Danger Zone: Delete account -->
+      <form id="deleteForm" class="danger-card" novalidate>
+        <h2>Danger Zone</h2>
+        <p class="danger-text">
+          Deleting your account will permanently remove your data (wishlist & cart).
+          This action cannot be undone.
+        </p>
+
+        <label class="confirm-label">
+          <input type="checkbox" id="confirmUnderstand" />
+          I understand the consequences.
+        </label>
+
+        <input
+          type="text"
+          id="confirmText"
+          placeholder="Type DELETE to confirm"
+          autocomplete="off"
+          aria-label="Type DELETE to confirm deletion"
+        />
+
+        <button type="submit" id="deleteBtn" disabled>Delete Account</button>
+      </form>
+
+      <p id="message" role="status" aria-live="polite"></p>
+    </main>
+
+    <footer role="contentinfo">
+      <div id="copy">
+        <p>&copy; 2025 Fresho. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="account.js" defer></script>
+</body>
+</html>

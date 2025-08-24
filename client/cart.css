@@ -1,0 +1,136 @@
+/* client/cart.css */
+/* OBS: Topbar/Nav/Footer + layout finns i nav.css. Detta är bara sidans innehåll. */
+
+/* Styr bredden på main och centrera (överstyr gridens stretch) */
+.page > main {
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding: 24px 32px 32px;
+  justify-self: center;
+  box-sizing: border-box;
+}
+
+/* Rubrik */
+main > h1 {
+  text-align: center;
+  margin: 8px 0 12px;
+  font-size: 2rem;
+}
+
+/* Summeringsrad */
+.cart-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 16px;
+}
+.cart-summary .summary-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+#cartCount { color: #666; }
+#cartTotal { font-size: 1.1rem; }
+
+.cart-summary .summary-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#clearCartBtn {
+  background: #e74c3c;
+  border: none;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+#clearCartBtn:hover { filter: brightness(0.95); }
+.checkoutBtn {
+  display: inline-block;
+  background: #28a745;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+/* Grid med 5 kolumner (matchar products/wishlist) */
+.cart-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+/* Produktkort */
+.cart-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+  overflow: hidden;
+  padding-bottom: 12px;
+  transition: transform 0.2s ease;
+}
+.cart-item:hover { transform: translateY(-2px); }
+
+.cart-item img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.cart-item h3 {
+  font-size: 1.05rem;
+  margin: 10px 0 4px;
+}
+
+.cart-item p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Knappar i kortet */
+.cart-item .actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+}
+.cart-item button {
+  background: #ffb703;
+  border: none;
+  color: #000;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.cart-item button:hover { filter: brightness(0.98); }
+.cart-item .remove {
+  background: #e74c3c;
+  color: #fff;
+}
+
+/* Responsiv nedskalning av kolumner */
+@media (max-width: 1200px) {
+  .cart-list { grid-template-columns: repeat(4, minmax(180px, 1fr)); }
+}
+@media (max-width: 992px) {
+  .cart-list { grid-template-columns: repeat(3, minmax(170px, 1fr)); }
+}
+@media (max-width: 768px) {
+  .cart-list { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+}
+@media (max-width: 480px) {
+  .cart-list { grid-template-columns: 1fr; }
+}

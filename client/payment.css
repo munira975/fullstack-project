@@ -1,0 +1,124 @@
+/* client/payment.css */
+/* OBS: Topbar/Nav/Footer + layout finns i nav.css. Detta är bara sidans innehåll. */
+
+/* Styr bredden på main och centrera (överstyr gridens stretch) */
+.page > main {
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding: 24px 32px 32px;
+  justify-self: center;
+  box-sizing: border-box;
+}
+
+/* Rubrik */
+main > h1 {
+  text-align: center;
+  margin: 8px 0 16px;
+  font-size: 2rem;
+}
+
+/* Layout för betalningssektionen (två kolumner) */
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* Kort (vänster/höger) */
+.qr-card,
+.summary-card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* Swish-QR */
+.qr-card {
+  text-align: center;
+}
+.qr-card img {
+  width: 60%;
+  max-width: 280px;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  display: block;
+  margin: 8px auto 12px;
+}
+.qr-card p {
+  margin-bottom: 10px;
+  color: #333;
+}
+.qr-card .help {
+  text-align: left;
+  margin: 0 auto;
+  max-width: 360px;
+  padding-left: 18px;
+  color: #444;
+}
+
+/* Order summary */
+.summary-card h2 {
+  text-align: center;
+  margin-bottom: 14px;
+}
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Rad i summeringen */
+.summary-item {
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.summary-item img {
+  width: 72px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+.summary-item .name {
+  font-weight: 500;
+  color: #222;
+}
+.summary-item .price {
+  white-space: nowrap;
+}
+
+/* Footer med total & länk */
+.summary-footer {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.total span { color: #666; margin-right: 8px; }
+.total strong { font-size: 1.15rem; }
+.back-to-cart {
+  text-decoration: none;
+  background: #28a745;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+/* Responsiv */
+@media (max-width: 900px) {
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+  .qr-card img { width: 70%; }
+}
+@media (max-width: 480px) {
+  .page > main { padding-inline: 16px; }
+  .qr-card img { width: 80%; }
+}

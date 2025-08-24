@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Sid-specifik CSS -->
+  <link rel="stylesheet" href="index.css" />
+  <!-- Gemensam layout -->
+  <link rel="stylesheet" href="nav.css" />
+  <script src="nav.js" defer></script>
+  <title>Fresho - Home</title>
+</head>
+
+<body>
+  <div class="page">
+    <!-- Top Bar -->
+    <header class="top-bar" role="banner">
+      <div class="logo" aria-label="Fresho logo">Fresho</div>
+
+      <div class="search-container" role="search">
+        <input type="text" placeholder="Search Products…" aria-label="Search products" />
+        <button class="search-icon" aria-label="Search">🔍</button>
+      </div>
+
+      <div class="user-actions" aria-label="User actions">
+        <span id="userEmail" aria-live="polite"></span>
+        <a id="accountLink" href="account.html">Account <br /><strong>Login</strong></a>
+        <a href="wishlist.html">Wishlist<br /><strong>My Items</strong></a>
+        <a href="cart.html">Cart<br /><strong>Items</strong></a>
+        <a href="payment.html">Payment</a>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-menu" role="navigation" aria-label="Primary">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="about.html">About Us</a>
+    </nav>
+
+    <!-- Innehåll -->
+    <main>
+      <!-- HERO -->
+      <section class="hero-section" aria-label="Featured Promotions">
+        <!-- Vänster: stor bild -->
+        <div class="promo-left">
+          <div class="big-image">
+            <img
+              class="big-image-img"
+              src="image/istockphoto_871227828_612x612.jpg"
+              alt="Fresh groceries delivered"
+              loading="eager"
+            />
+            <div class="ellipse"></div>
+            <a href="products.html" class="button-text">Shop with us now</a>
+            <p class="ellipse-text">
+              Happiness is...<br />
+              receiving what you<br />
+              ordered online
+            </p>
+          </div>
+        </div>
+
+        <!-- Höger: två kort med bild -->
+        <div class="promo-right">
+          <article class="product-feature" aria-label="Fresh Fruits">
+            <img
+              class="feature-img"
+              src="image/360_F_298046496_PR8sGv1JnGvzThuN8j5PsrzximzSn2p3.jpg"
+              alt="Fresh fruits"
+              loading="lazy"
+            />
+            <h3 class="fresh-text">Fresh</h3>
+            <h2 class="fruits-text">Fruits</h2>
+            <div class="shop-now-wrapper">
+              <a href="products.html?categories=Juice" class="shop-now-text">Shop Now &gt;</a>
+            </div>
+          </article>
+
+          <article class="product-feature" aria-label="Organic Vegetables">
+            <img
+              class="feature-img"
+              src="image/depositphotos_73493287_stock_photo_vegetables.jpg"
+              alt="Organic vegetables"
+              loading="lazy"
+            />
+            <h3 class="organic-text">Organic</h3>
+            <h2 class="vegetables-text">Vegetables</h2>
+            <div class="shop-now2-wrapper">
+              <a href="products.html?categories=Grains" class="shop-now2-text">Shop Now &gt;</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Kategorirad -->
+      <section class="categories" aria-label="Product Categories">
+        <a href="products.html?categories=Snacks" class="category-link category-snack">
+          <article class="category-card" aria-label="Snack & Spice">
+            <img src="/public/image/spices.png" alt="Snacks and Spices" class="category-image" />
+            <h3 class="category-title">Snack & Spice</h3>
+            <p class="category-count">40 items</p>
+          </article>
+        </a>
+
+        <a href="products.html?categories=Juice" class="category-link category-juice">
+          <article class="category-card" aria-label="Juice & Drinks">
+            <img src="/public/image/drinks.png" alt="Juice and Drinks" class="category-image" />
+            <h3 class="category-title">Juice & Drinks</h3>
+            <p class="category-count">40 items</p>
+          </article>
+        </a>
+
+        <a href="products.html?categories=Seafood" class="category-link category-seafood">
+          <article class="category-card" aria-label="Seafood">
+            <img src="/public/image/seafood.png" alt="Seafood" class="category-image" />
+            <h3 class="category-title">Seafood</h3>
+            <p class="category-count">40 items</p>
+          </article>
+        </a>
+
+        <a href="products.html?categories=Meat" class="category-link category-meat">
+          <article class="category-card" aria-label="Meat">
+            <img src="/public/image/meat.png" alt="Meat Products" class="category-image" />
+            <h3 class="category-title">Meat</h3>
+            <p class="category-count">40 items</p>
+          </article>
+        </a>
+
+        <a href="products.html?categories=Grains" class="category-link category-grains">
+          <article class="category-card" aria-label="Grains">
+            <img src="/public/image/grains.png" alt="Grains" class="category-image" />
+            <h3 class="category-title">Grains</h3>
+            <p class="category-count">40 items</p>
+          </article>
+        </a>
+      </section>
+    </main>
+
+    <footer role="contentinfo">
+      <div id="copy">
+        <p>&copy; 2025 Fresho. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Sidans egen CSS -->
+  <link rel="stylesheet" href="products.css" />
+  <!-- Gemensam layout & header/nav/footer -->
+  <link rel="stylesheet" href="nav.css" />
+
+  <script src="nav.js" defer></script>
+  <title>Fresho - Products</title>
+</head>
+
+<body>
+  <div class="page">
+    <!-- Top Bar -->
+    <header class="top-bar" role="banner">
+      <div class="logo" aria-label="Fresho logo">Fresho</div>
+
+      <div class="search-container" role="search">
+        <input type="text" placeholder="Search Products…" aria-label="Search products" />
+        <button class="search-icon" aria-label="Search">🔍</button>
+      </div>
+
+      <div class="user-actions" aria-label="User actions">
+        <span id="userEmail" aria-live="polite"></span>
+        <a id="accountLink" href="account.html">Account <br /><strong>Login</strong></a>
+        <a href="wishlist.html">Wishlist<br /><strong>My Items</strong></a>
+        <a href="cart.html">Cart<br /><strong>Items</strong></a>
+        <a href="payment.html">Payment</a>
+      </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu" role="navigation" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="products.html" aria-current="page">Products</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="about.html">About Us</a>
+    </nav>
+
+    <!-- Scrollområde -->
+    <main>
+      <h1 id="pageTitle">Our Products</h1>
+      <div id="productsGrid" class="product-list"></div>
+    </main>
+
+    <footer role="contentinfo">
+      <div id="copy">
+        <p>&copy; 2025 Fresho. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="products.js" defer></script>
+</body>
+</html>

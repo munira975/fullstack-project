@@ -1,0 +1,127 @@
+<!-- client/contact.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Sid-specifik CSS först -->
+  <link rel="stylesheet" href="contact.css" />
+  <!-- Gemensam layout & header/nav/footer -->
+  <link rel="stylesheet" href="nav.css" />
+
+  <script src="nav.js" defer></script>
+  <script src="contact.js" defer></script>
+  <title>Fresho - Contact Us</title>
+</head>
+
+<body>
+  <div class="page">
+    <!-- Top Bar -->
+    <header class="top-bar" role="banner">
+      <div class="logo" aria-label="Fresho logo">Fresho</div>
+
+      <div class="search-container" role="search">
+        <input type="text" placeholder="Search Products…" aria-label="Search products" />
+        <button class="search-icon" aria-label="Search">🔍</button>
+      </div>
+
+      <div class="user-actions" aria-label="User actions">
+        <span id="userEmail" aria-live="polite"></span>
+        <a id="accountLink" href="account.html">Account <br /><strong>Login</strong></a>
+        <a href="wishlist.html">Wishlist<br /><strong>My Items</strong></a>
+        <a href="cart.html">Cart<br /><strong>Items</strong></a>
+        <a href="payment.html">Payment</a>
+      </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu" role="navigation" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html" aria-current="page">Contact Us</a>
+      <a href="about.html">About Us</a>
+    </nav>
+
+    <!-- Scrollbara innehållet -->
+    <main>
+      <h1>Contact Us</h1>
+
+      <section class="contact-grid" aria-label="Contact section">
+        <!-- Kontaktinfo -->
+        <div class="card info-card">
+          <h2>Get in touch</h2>
+          <p>We usually respond within 24 hours on weekdays.</p>
+
+          <div class="info-row">
+            <div class="info-label">Email</div>
+            <div class="info-value"><a href="mailto:support@example.com">support@example.com</a></div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">Phone</div>
+            <div class="info-value"><a href="tel:+4612345678">+46 12 345 678</a></div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">Address</div>
+            <div class="info-value">Fresho AB<br/>Torggatan 1<br/>111 22 Stockholm</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">Hours</div>
+            <div class="info-value">Mon–Fri: 09–17<br/>Sat–Sun: Closed</div>
+          </div>
+
+          <!-- Valfri karta/bild -->
+          <div class="map-placeholder" aria-hidden="true">Map / Image</div>
+        </div>
+
+        <!-- Kontaktformulär -->
+        <div class="card form-card">
+          <h2>Send us a message</h2>
+
+          <div id="formAlert" class="alert" role="status" aria-live="polite"></div>
+
+          <form id="contactForm" novalidate>
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" autocomplete="name" required />
+              <p class="error-text" data-for="name"></p>
+            </div>
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" required />
+              <p class="error-text" data-for="email"></p>
+            </div>
+
+            <div class="field">
+              <label for="subject">Subject</label>
+              <input id="subject" name="subject" type="text" required />
+              <p class="error-text" data-for="subject"></p>
+            </div>
+
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="6" required></textarea>
+              <p class="error-text" data-for="message"></p>
+            </div>
+
+            <div class="actions">
+              <button type="submit">Send Message</button>
+              <button type="reset" class="secondary">Reset</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer role="contentinfo">
+      <div id="copy">
+        <p>&copy; 2025 Fresho. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

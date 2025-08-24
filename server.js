@@ -8,6 +8,12 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 
+// API-routes
+import accountRoutes from './server/routes/account.js';
+import productRoutes from './server/routes/products.js';
+import wishlistRoutes from './server/routes/wishlist.js';
+import cartRoutes from './server/routes/cart.js';
+
 
 dotenv.config();
 
@@ -63,6 +69,11 @@ app.use(session({
   },
 }));
 
+/* ---- API ---- */
+app.use('/api/account', accountRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/cart', cartRoutes);
 
 /* Healthcheck & 404 */
 app.get('/api/health', (_req, res) => res.json({ ok: true }));

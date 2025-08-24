@@ -1,0 +1,81 @@
+<!-- client/payment.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Sid-specifik CSS först -->
+  <link rel="stylesheet" href="payment.css" />
+  <!-- Gemensam layout & header/nav/footer -->
+  <link rel="stylesheet" href="nav.css" />
+
+  <script src="nav.js" defer></script>
+  <script src="payment.js" defer></script>
+  <title>Fresho - Payment</title>
+</head>
+
+<body>
+  <div class="page">
+    <!-- Top Bar -->
+    <header class="top-bar" role="banner">
+      <div class="logo" aria-label="Fresho logo">Fresho</div>
+
+      <div class="search-container" role="search">
+        <input type="text" placeholder="Search Products…" aria-label="Search products" />
+        <button class="search-icon" aria-label="Search">🔍</button>
+      </div>
+
+      <div class="user-actions" aria-label="User actions">
+        <span id="userEmail" aria-live="polite"></span>
+        <a id="accountLink" href="account.html">Account <br /><strong>Login</strong></a>
+        <a href="wishlist.html">Wishlist<br /><strong>My Items</strong></a>
+        <a href="cart.html">Cart<br /><strong>Items</strong></a>
+        <a href="payment.html" aria-current="page">Payment</a>
+      </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu" role="navigation" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="about.html">About Us</a>
+    </nav>
+
+    <!-- Scrollbara innehållet -->
+    <main>
+      <h1>Payment</h1>
+
+      <section class="payment-grid" aria-label="Payment Options and Order Summary">
+        <!-- Left: Swish QR -->
+        <div class="qr-card">
+          <img src="/image/swish-QR-small.png" alt="Swish QR Code" />
+          <p>Scan this Swish code to complete your payment.</p>
+          <ul class="help">
+            <li>Open Swish on your phone</li>
+            <li>Scan the QR code</li>
+            <li>Confirm the amount and approve</li>
+          </ul>
+        </div>
+
+        <!-- Right: Order Summary -->
+        <div class="summary-card">
+          <h2>Order Summary</h2>
+          <div id="cartList" class="summary-list"></div>
+          <div class="summary-footer">
+            <div class="total"><span>Total:</span> <strong id="totalPrice">0 kr</strong></div>
+            <a class="back-to-cart" href="cart.html">Edit Cart</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer role="contentinfo">
+      <div id="copy">
+        <p>&copy; 2025 Fresho. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

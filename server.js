@@ -69,6 +69,41 @@ app.use(session({
   },
 }));
 
+
+/* ---- Statiska kataloger ---- */
+const CLIENT_DIR = path.join(__dirname, 'client');
+const PUBLIC_DIR = path.join(__dirname, 'public');
+const PUBLIC_IMAGE_DIR = path.join(PUBLIC_DIR, 'image');
+
+// Extra kompatibilitetskandidater om du råkat lägga bilder i client/
+const CLIENT_PUBLIC_IMAGE_DIR = path.join(CLIENT_DIR, 'public', 'image');
+const CLIENT_IMAGE_DIR        = path.join(CLIENT_DIR, 'image');
+
+// Logga var vi letar bilder
+console.log('Static roots:');
+console.log('  /public            ->', PUBLIC_DIR);
+console.log('  /public/image (*)  ->', PUBLIC_IMAGE_DIR, fs.existsSync(PUBLIC_IMAGE_DIR) ? '(exists)' : '(missing)');
+console.log('  /public/image (alt)->', CLIENT_PUBLIC_IMAGE_DIR, fs.existsSync(CLIENT_PUBLIC_IMAGE_DIR) ? '(exists)' : '(missing)');
+console.log('  /public/image (alt)->', CLIENT_IMAGE_DIR,        fs.existsSync(CLIENT_IMAGE_DIR) ? '(exists)' : '(missing)');
+
+
+// /public → public/
+app.use('/public', express.static(PUBLIC_DIR));
+
+// /image → public/image (t.ex. /image/products/foo.png)
+app.use('/image', express.static(PUBLIC_IMAGE_DIR));
+
+// /public/image → public/image
+app.use('/public/image', express.static(PUBLIC_IMAGE_DIR));
+
+// Fallbacks: om bilder ligger i client/public/image eller client/image
+app.use('/public/image', express.static(CLIENT_PUBLIC_IMAGE_DIR));
+app.use('/public/image', express.static(CLIENT_IMAGE_DIR));
+
+// Clientfiler (html/css/js)
+app.use(express.static(CLIENT_DIR));
+
+
 /* ---- API ---- */
 app.use('/api/account', accountRoutes);
 app.use('/api/products', productRoutes);

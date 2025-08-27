@@ -6,14 +6,14 @@ import Account from '../models/account.js';
 
 const router = express.Router();
 
-
+/* ---------------- Helpers ---------------- */
 const CATEGORY_MAP = {
   snacks: 'Snacks',
   juice: 'Juice',
   seafood: 'Seafood',
   meat: 'Meat',
   grains: 'Grains',
-  fruits: 'Fruits',  
+  fruits: 'Fruits',   // <-- 6:e kategorin
 };
 
 const sanitizeLimit = (v, def = 100, max = 200) => {
@@ -31,7 +31,7 @@ const normCategory = (c) => {
   return CATEGORY_MAP[key] || c;
 };
 
-/* --Toggle wishlist-- */
+/* --------------- Toggle wishlist (❤️) --------------- */
 router.patch('/:id/heart', async (req, res) => {
   const email = req.session.user?.email;
   if (!email) return res.status(401).json({ message: 'Not logged in' });
@@ -57,12 +57,12 @@ router.patch('/:id/heart', async (req, res) => {
     await account.save();
     return res.status(200).json({ heart });
   } catch (err) {
-    console.error('Error toggling heart:', err);
+    console.error('❌ Error toggling heart:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
 
-/* --- Toggle cart --- */
+/* ---------------- Toggle cart (🛒) ---------------- */
 router.patch('/:id/cart', async (req, res) => {
   const email = req.session.user?.email;
   if (!email) return res.status(401).json({ message: 'Not logged in' });
@@ -88,16 +88,25 @@ router.patch('/:id/cart', async (req, res) => {
     await account.save();
     return res.status(200).json({ inCart });
   } catch (err) {
-    console.error('Error updating cart:', err);
+    console.error('❌ Error updating cart:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
 
-
+/**
+ * GET /api/products
+ * Stöd:
+ *  - ?q=term (regex i name, case-insensitive)
+ *  - ?category=Snacks|Juice|Seafood|Meat|Grains|Fruits (även kommaseparerad)
+ *  - ?categories=Snacks,Meat,Grains,Fruits           (flerval—rekommenderat)
+ *  - ?limit=50  (max 200)
+ * Inloggad användare får per-produkt: { heart, inCart }.
+ */
 router.get('/', async (req, res) => {
   try {
     const { q, search, category: rawCategory, categories: rawCategories, limit: rawLimit } = req.query;
 
+    // 1) Läs ev. flera kategorier via ?categories=Snacks,Meat
     let cats = [];
     if (rawCategories) {
       cats = String(rawCategories)
@@ -107,7 +116,7 @@ router.get('/', async (req, res) => {
         .map(normCategory);
     }
 
-
+    // 2) Stöd även för ?category=Snacks eller ?category=snacks,meat
     if (rawCategory) {
       const parts = String(rawCategory)
         .split(',')
@@ -154,7 +163,7 @@ router.get('/', async (req, res) => {
 
     return res.status(200).json(payload);
   } catch (err) {
-    console.error('Error fetching products:', err);
+    console.error('❌ Error fetching products:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
@@ -169,14 +178,15 @@ router.get('/categories/list', async (_req, res) => {
     ]);
     return res.json(data);
   } catch (err) {
-    console.error('Error aggregating categories:', err);
+    console.error('❌ Error aggregating categories:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
 
-
-/*---- Förslag (autosuggest) ----*/
-
+/* ---- Förslag (autosuggest) ----
+   GET /api/products/suggest?prefix=a&limit=8&categories=Snacks,Meat
+   Matchar ORDSTART: \bprefix (så "ju" hittar "Apple Juice")
+*/
 router.get('/suggest', async (req, res) => {
   try {
     const prefix = String(req.query.prefix || '').trim();
@@ -207,7 +217,7 @@ router.get('/suggest', async (req, res) => {
 
     return res.json(docs);
   } catch (err) {
-    console.error('Error in suggest:', err);
+    console.error('❌ Error in suggest:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });

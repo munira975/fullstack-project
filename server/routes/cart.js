@@ -14,7 +14,7 @@ const toValidObjectIds = (list) => {
     .map((v) => new mongoose.Types.ObjectId(v));
 };
 
-
+/* GET /api/cart – hämta varor i kundvagnen */
 router.get('/', async (req, res) => {
   const email = req.session.user?.email;
   if (!email) return res.status(401).json({ message: 'Not logged in' });
@@ -32,12 +32,12 @@ router.get('/', async (req, res) => {
 
     return res.json(items);
   } catch (err) {
-    console.error('Error fetching cart:', err);
+    console.error('❌ Error fetching cart:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
 
-
+/* PATCH /api/cart/:id – toggle */
 router.patch('/:id', async (req, res) => {
   const email = req.session.user?.email;
   if (!email) return res.status(401).json({ message: 'Not logged in' });
@@ -66,12 +66,12 @@ router.patch('/:id', async (req, res) => {
     await account.save();
     return res.json({ success: true, inCart });
   } catch (err) {
-    console.error('Error updating cart:', err);
+    console.error('❌ Error updating cart:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
 
-
+/* DELETE /api/cart/clear – rensa kundvagnen */
 router.delete('/clear', async (req, res) => {
   const email = req.session.user?.email;
   if (!email) return res.status(401).json({ message: 'Not logged in' });
@@ -84,7 +84,7 @@ router.delete('/clear', async (req, res) => {
     await account.save();
     return res.json({ message: 'Cart cleared' });
   } catch (err) {
-    console.error('Error clearing cart:', err);
+    console.error('❌ Error clearing cart:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });

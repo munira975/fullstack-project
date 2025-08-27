@@ -8,12 +8,11 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 
-// API-routes
+// API routes
 import accountRoutes from './server/routes/account.js';
 import productRoutes from './server/routes/products.js';
 import wishlistRoutes from './server/routes/wishlist.js';
 import cartRoutes from './server/routes/cart.js';
-
 
 dotenv.config();
 
@@ -39,9 +38,9 @@ const ORIGINS = rawOrigins.split(',').map(s => s.trim()).filter(Boolean);
 
 const corsOptions = {
   origin: (origin, cb) => {
-    if (!origin) return cb(null, true);             
+    if (!origin) return cb(null, true); // same-origin requests have no Origin
     if (ORIGINS.includes(origin)) return cb(null, true);
-    console.warn(`CORS blocked: ${origin} (allow: ${ORIGINS.join(', ')})`);
+    console.warn(`🚫 CORS blocked: ${origin} (allowed: ${ORIGINS.join(', ')})`);
     return cb(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
@@ -58,51 +57,54 @@ if (SECURE_COOKIES) app.set('trust proxy', 1);
 
 app.use(session({
   name: 'sid',
-  secret: process.env.SESSION_SECRET || 'hemlig_sesionsnyckel',
+  secret: process.env.SESSION_SECRET || 'dev_session_secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
     sameSite: SECURE_COOKIES ? 'none' : 'lax',
     secure: SECURE_COOKIES,
-    maxAge: 1000 * 60 * 60 * 24,
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
   },
 }));
 
-
-/* ---- Statiska kataloger ---- */
+/* ---- Static directories ---- */
 const CLIENT_DIR = path.join(__dirname, 'client');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const PUBLIC_IMAGE_DIR = path.join(PUBLIC_DIR, 'image');
 
-// Extra kompatibilitetskandidater om du råkat lägga bilder i client/
+// Fallback candidates if images ended up under client/
 const CLIENT_PUBLIC_IMAGE_DIR = path.join(CLIENT_DIR, 'public', 'image');
 const CLIENT_IMAGE_DIR        = path.join(CLIENT_DIR, 'image');
 
-// Logga var vi letar bilder
-console.log('Static roots:');
+// Log where we serve static assets from
+console.log('🗂  Static roots:');
 console.log('  /public            ->', PUBLIC_DIR);
 console.log('  /public/image (*)  ->', PUBLIC_IMAGE_DIR, fs.existsSync(PUBLIC_IMAGE_DIR) ? '(exists)' : '(missing)');
 console.log('  /public/image (alt)->', CLIENT_PUBLIC_IMAGE_DIR, fs.existsSync(CLIENT_PUBLIC_IMAGE_DIR) ? '(exists)' : '(missing)');
 console.log('  /public/image (alt)->', CLIENT_IMAGE_DIR,        fs.existsSync(CLIENT_IMAGE_DIR) ? '(exists)' : '(missing)');
 
-
-// /public → public/
+// Static mounts
 app.use('/public', express.static(PUBLIC_DIR));
-
-// /image → public/image (t.ex. /image/products/foo.png)
 app.use('/image', express.static(PUBLIC_IMAGE_DIR));
-
-// /public/image → public/image
 app.use('/public/image', express.static(PUBLIC_IMAGE_DIR));
-
-// Fallbacks: om bilder ligger i client/public/image eller client/image
 app.use('/public/image', express.static(CLIENT_PUBLIC_IMAGE_DIR));
 app.use('/public/image', express.static(CLIENT_IMAGE_DIR));
 
-// Clientfiler (html/css/js)
+// Serve client assets (html/css/js)
 app.use(express.static(CLIENT_DIR));
 
+/* ---- Explicit client page routes (fixes navigation to about/products/etc.) ---- */
+const sendClient = (page) => (_req, res) => res.sendFile(path.join(CLIENT_DIR, page));
+app.get('/', sendClient('index.html'));
+app.get('/index.html', sendClient('index.html'));
+app.get('/about.html', sendClient('about.html'));
+app.get('/products.html', sendClient('products.html'));
+app.get('/contact.html', sendClient('contact.html'));
+app.get('/account.html', sendClient('account.html'));
+app.get('/cart.html', sendClient('cart.html'));
+app.get('/wishlist.html', sendClient('wishlist.html'));
+app.get('/payment.html', sendClient('payment.html'));
 
 /* ---- API ---- */
 app.use('/api/account', accountRoutes);
@@ -114,9 +116,9 @@ app.use('/api/cart', cartRoutes);
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/*', (_req, res) => res.status(404).json({ message: 'Not found' }));
 
-/* Global felhanterare */
+/* Global error handler */
 app.use((err, _req, res, _next) => {
-  console.error('Unhandled error:', err?.message || err);
+  console.error('❌ Unhandled error:', err?.message || err);
   res.status(500).json({ message: 'Server error' });
 });
 
@@ -124,19 +126,20 @@ app.use((err, _req, res, _next) => {
 (async () => {
   try {
     if (!process.env.MONGO_URI) {
-      console.error('MONGO_URI saknas i .env');
+      console.error('❌ MONGO_URI is missing in .env');
       process.exit(1);
     }
-    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log('Connected to MongoDB');
+    // Remove deprecated options; driver v4+ ignores them anyway
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ Connected to MongoDB');
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
-      console.log('CORS allowlist:', ORIGINS.join(', '));
-      console.log('Cookies:', `sameSite=${SECURE_COOKIES ? 'none' : 'lax'}, secure=${SECURE_COOKIES}`);
-      console.log('NODE_ENV:', NODE_ENV);
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
+      console.log('🌐 CORS allowlist:', ORIGINS.join(', '));
+      console.log('🔐 Cookies:', `sameSite=${SECURE_COOKIES ? 'none' : 'lax'}, secure=${SECURE_COOKIES}`);
+      console.log('🏷️ NODE_ENV:', NODE_ENV);
     });
   } catch (err) {
-    console.error('MongoDB connection error:', err);
+    console.error('❌ MongoDB connection error:', err);
     process.exit(1);
   }
 })();

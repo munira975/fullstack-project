@@ -1,124 +1,110 @@
 // client/account.js
 
-const el = (id) => document.getElementById(id);
-const setMsg = (text, isError = false) => {
-  const m = el('message');
+// Helpers
+const $ = (id) => document.getElementById(id);
+const setMsg = (text, isErr = false) => {
+  const m = $('message');
   if (!m) return;
   m.textContent = text || '';
-  m.style.color = isError ? '#c0392b' : '#2c3e50';
+  m.style.color = isErr ? '#b00020' : '#1f2937';
+};
+const setBusy = (btnId, v) => { const b = $(btnId); if (b) b.disabled = !!v; };
+const parseErr = async (res) => {
+  try {
+    const d = await res.json();
+    return d?.error?.message || d?.message || `Fel ${res.status}`;
+  } catch {
+    return `Fel ${res.status}`;
+  }
 };
 
-const setBusy = (btnId, busy) => {
-  const btn = el(btnId);
-  if (btn) btn.disabled = !!busy;
-};
-
-/* ===== Inloggning ===== */
-el('loginForm')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  setMsg('');
-  setBusy('loginBtn', true);
-
-  const email = el('loginEmail')?.value?.trim();
-  const password = el('loginPassword')?.value;
-
-  try {
-    const res = await fetch('/api/account', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      localStorage.setItem('email', data.email || '');
-      window.location.href = 'index.html';
-    } else {
-      const err = await res.json().catch(() => ({}));
-      setMsg(err.message || 'Inloggningen misslyckades', true);
-    }
-  } catch (err) {
-    console.error('Fel vid inloggning:', err);
-    setMsg('Nätverksfel. Försök igen.', true);
-  } finally {
-    setBusy('loginBtn', false);
-  }
-});
-
-/* ===== Skapa konto ===== */
-el('createForm')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  setMsg('');
-  setBusy('createBtn', true);
-
-  const email = el('createEmail')?.value?.trim();
-  const password = el('createPassword')?.value;
-
-  try {
-    const res = await fetch('/api/account/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      localStorage.setItem('email', data.email || '');
-      window.location.href = 'index.html';
-    } else {
-      const err = await res.json().catch(() => ({}));
-      setMsg(err.message || 'Konto kunde inte skapas', true);
-    }
-  } catch (err) {
-    console.error('Fel vid skapande av konto:', err);
-    setMsg('Nätverksfel. Försök igen.', true);
-  } finally {
-    setBusy('createBtn', false);
-  }
-});
-
-/* ===== Delete account ===== */
-(() => {
-  const understand = el('confirmUnderstand');
-  const confirmText = el('confirmText');
-  const deleteBtn = el('deleteBtn');
-  const form = el('deleteForm');
-
-  const updateState = () => {
-    const ok = understand?.checked && confirmText?.value?.trim() === 'DELETE';
-    if (deleteBtn) deleteBtn.disabled = !ok;
-  };
-
-  understand?.addEventListener('change', updateState);
-  confirmText?.addEventListener('input', updateState);
-
-  form?.addEventListener('submit', async (e) => {
+// ===== Login =====
+const loginForm = $('loginForm');
+if (loginForm) {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     setMsg('');
-    setBusy('deleteBtn', true);
+    setBusy('loginBtn', true);
+
+    const email = $('loginEmail')?.value.trim().toLowerCase();
+    const password = $('loginPassword')?.value;
 
     try {
       const res = await fetch('/api/account', {
-        method: 'DELETE',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ confirmText: confirmText.value.trim() }),
+        body: JSON.stringify({ email, password }),
       });
+      if (!res.ok) return setMsg(await parseErr(res), true);
 
-      if (res.ok) {
-        localStorage.removeItem('email');
-        window.location.href = 'index.html';
-      } else {
-        const err = await res.json().catch(() => ({}));
-        setMsg(err.message || 'Kunde inte radera konto', true);
-      }
-    } catch (err) {
-      console.error('Fel vid radering:', err);
-      setMsg('Nätverksfel. Försök igen.', true);
+      const data = await res.json(); // { message, email, username }
+      localStorage.setItem('email', data.email || '');
+      localStorage.setItem('username', data.username || '');
+      location.href = 'index.html';
+    } catch {
+      setMsg('Network error. Try again.', true);
     } finally {
-      setBusy('deleteBtn', false);
+      setBusy('loginBtn', false);
     }
   });
+}
+
+// ===== Create Account (med username + bekräfta lösenord) =====
+const createForm = $('createForm');
+if (createForm) {
+  createForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setMsg('');
+    setBusy('createBtn', true);
+
+    const username = $('createUsername')?.value.trim();
+    const email = $('createEmail')?.value.trim().toLowerCase();
+    const password = $('createPassword')?.value;
+    const confirmPassword = $('createPasswordConfirm')?.value;
+
+    // Klientside-validering
+    if (!username || !email || !password || !confirmPassword) {
+      setMsg('Fill in all fields.', true);
+      setBusy('createBtn', false);
+      return;
+    }
+    if (password !== confirmPassword) {
+      setMsg('Passwords do not match.', true);
+      setBusy('createBtn', false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/account/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        // Skicka med confirmPassword också – servern validerar om det finns
+        body: JSON.stringify({ username, email, password, confirmPassword }),
+      });
+      if (!res.ok) return setMsg(await parseErr(res), true);
+
+      const data = await res.json(); // { message, email, username }
+      localStorage.setItem('email', data.email || '');
+      localStorage.setItem('username', data.username || '');
+      location.href = 'index.html';
+    } catch {
+      setMsg('Network error. Try again.', true);
+    } finally {
+      setBusy('createBtn', false);
+    }
+  });
+}
+
+// (valfritt) Hämta session vid sidladdning
+(async () => {
+  try {
+    const r = await fetch('/api/account/session', { credentials: 'include' });
+    if (r.ok) {
+      const s = await r.json();
+      localStorage.setItem('email', s.email || '');
+      localStorage.setItem('username', s.username || '');
+    }
+  } catch {}
 })();

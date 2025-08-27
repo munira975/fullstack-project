@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
 
     return res.json(products);
   } catch (err) {
-    console.error('Error fetching wishlist:', err);
+    console.error('❌ Error fetching wishlist:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
@@ -65,7 +65,7 @@ router.patch('/:id', async (req, res) => {
     await account.save();
     return res.json({ heart });
   } catch (err) {
-    console.error('Error updating wishlist:', err);
+    console.error('❌ Error updating wishlist:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
@@ -84,7 +84,7 @@ router.delete('/clear', async (req, res) => {
 
     return res.json({ message: 'Wishlist cleared' });
   } catch (err) {
-    console.error('Error clearing wishlist:', err);
+    console.error('❌ Error clearing wishlist:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });

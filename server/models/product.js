@@ -1,6 +1,7 @@
 // server/models/product.js
 import mongoose from 'mongoose';
 
+// 6 kategorier
 export const ALLOWED_CATEGORIES = ['Snacks', 'Juice', 'Seafood', 'Meat', 'Grains', 'Fruits'];
 
 const productSchema = new mongoose.Schema(

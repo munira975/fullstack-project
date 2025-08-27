@@ -5,90 +5,133 @@ import Account from '../models/account.js';
 const router = express.Router();
 const COOKIE_NAME = 'sid';
 
+const norm = (v) => (typeof v === 'string' ? v.trim() : '');
 const normEmail = (v) => (typeof v === 'string' ? v.trim().toLowerCase() : '');
+const isValidUsername = (u) => /^[a-zA-Z0-9_.-]{3,40}$/.test(u);
 
-/* POST /api/account/create – skapa konto och logga in */
+function sendErr(res, code, message, details) {
+  return res.status(code).json({ error: { code, message, details } });
+}
+
+/* ===== Create account ===== */
 router.post('/create', async (req, res) => {
   const email = normEmail(req.body?.email);
-  const password = req.body?.password;
+  const password = norm(req.body?.password);
+  const confirmPassword = norm(req.body?.confirmPassword); // optional from client
+  const username = norm(req.body?.username);
 
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email och lösenord krävs' });
+  if (!email || !password || !username) {
+    return sendErr(res, 400, 'Email, username and password are required');
+  }
+  if (!isValidUsername(username)) {
+    return sendErr(
+      res,
+      400,
+      'Invalid username (3–40 characters; a–z, 0–9, . _ -)'
+    );
+  }
+  if (confirmPassword && password !== confirmPassword) {
+    return sendErr(res, 400, 'Passwords do not match');
   }
 
   try {
-    const existing = await Account.findOne({ email });
-    if (existing) return res.status(409).json({ message: 'Kontot finns redan' });
-
-    const account = new Account({ email, password, wishlist: [], cart: [] });
-    await account.save();
-
-    req.session.user = { email: account.email };
-    return res.status(201).json({ message: 'Konto skapat', email: account.email });
-  } catch (err) {
-    console.error('Fel vid skapande:', err);
-    return res.status(500).json({ message: 'Serverfel' });
-  }
-});
-
-/* POST /api/account – logga in */
-router.post('/', async (req, res) => {
-  const email = normEmail(req.body?.email);
-  const password = req.body?.password;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email och lösenord krävs' });
-  }
-
-  try {
-    const account = await Account.findOne({ email });
-    if (!account || account.password !== password) {
-      return res.status(401).json({ message: 'Fel e-post eller lösenord' });
+    // Only check email for uniqueness (usernames can repeat)
+    const existing = await Account.findOne({ email }).lean();
+    if (existing) {
+      return sendErr(res, 409, 'Email already in use.');
     }
 
-    req.session.user = { email: account.email };
-    return res.json({ message: 'Inloggad', email: account.email });
+    const account = new Account({
+      email,
+      password,
+      username,
+      wishlist: [],
+      cart: [],
+    });
+    await account.save();
+
+    req.session.user = { email: account.email, username: account.username };
+    return res.status(201).json({
+      message: 'Account created',
+      email: account.email,
+      username: account.username,
+    });
   } catch (err) {
-    console.error('Inloggningsfel:', err);
-    return res.status(500).json({ message: 'Serverfel' });
+    console.error('❌ Error during creation:', err);
+    if (err?.code === 11000) {
+      if (err.keyPattern?.email) return sendErr(res, 409, 'Email already in use.');
+      return sendErr(res, 409, 'Already in use.');
+    }
+    if (err?.name === 'ValidationError') {
+      const details = Object.values(err.errors).map((e) => e.message);
+      return sendErr(res, 400, 'Invalid field values', details);
+    }
+    return sendErr(res, 500, 'Server error');
   }
 });
 
-/* GET /api/account/session – kontrollera inloggning */
-router.get('/session', (req, res) => {
-  const email = req.session?.user?.email;
-  if (email) return res.json({ email });
-  return res.status(401).json({ message: 'Inte inloggad' });
+/* ===== Login ===== */
+router.post('/', async (req, res) => {
+  const email = normEmail(req.body?.email);
+  const password = norm(req.body?.password);
+
+  if (!email || !password) {
+    return sendErr(res, 400, 'Email and password are required');
+  }
+
+  try {
+    const account = await Account.findOne({ email }).lean();
+    if (!account || account.password !== password) {
+      return sendErr(res, 401, 'Incorrect email or password');
+    }
+
+    req.session.user = { email: account.email, username: account.username };
+    return res.json({
+      message: 'Logged in',
+      email: account.email,
+      username: account.username,
+    });
+  } catch (err) {
+    console.error('❌ Login error:', err);
+    return sendErr(res, 500, 'Server error');
+  }
 });
 
-/* POST /api/account/logout – logga ut */
+/* ===== Session ===== */
+router.get('/session', (req, res) => {
+  const u = req.session?.user;
+  if (u?.email) return res.json({ email: u.email, username: u.username });
+  return sendErr(res, 401, 'Not signed in');
+});
+
+/* ===== Logout ===== */
 router.post('/logout', (req, res) => {
   req.session.destroy(() => {
     res.clearCookie(COOKIE_NAME);
-    return res.json({ message: 'Utloggad' });
+    return res.json({ message: 'Logged out' });
   });
 });
 
-/* DELETE /api/account – radera inloggat konto */
+/* ===== Delete account (signed-in) ===== */
 router.delete('/', async (req, res) => {
   try {
     const email = req.session?.user?.email;
-    if (!email) return res.status(401).json({ message: 'Inte inloggad' });
+    if (!email) return sendErr(res, 401, 'Not signed in');
 
     const confirmText = req.body?.confirmText;
     if (confirmText !== 'DELETE') {
-      return res.status(400).json({ message: 'Bekräftelsetexten måste vara DELETE' });
+      return sendErr(res, 400, "The confirmation text must be 'DELETE'.");
     }
 
     await Account.deleteOne({ email });
 
     req.session.destroy(() => {
       res.clearCookie(COOKIE_NAME);
-      return res.status(200).json({ message: 'Konto raderat', success: true });
+      return res.status(200).json({ message: 'Account deleted', success: true });
     });
   } catch (err) {
-    console.error('Delete account failed:', err);
-    return res.status(500).json({ message: 'Serverfel' });
+    console.error('❌ Delete account failed:', err);
+    return sendErr(res, 500, 'Server error');
   }
 });
 

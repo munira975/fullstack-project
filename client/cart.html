@@ -4,19 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cart</title>
 
-  <!-- Sid-specifik CSS först -->
-  <link rel="stylesheet" href="cart.css" />
-  <!-- Gemensam layout & header/nav/footer -->
+  <!-- Shared layout -->
   <link rel="stylesheet" href="nav.css" />
-
-  <script src="nav.js" defer></script>
-  <title>Fresho - Cart</title>
+  <!-- Cart page styles -->
+  <link rel="stylesheet" href="cart.css" />
 </head>
-
 <body>
   <div class="page">
-    <!-- Top Bar -->
+    <!-- Header -->
     <header class="top-bar" role="banner">
       <div class="logo" aria-label="Fresho logo">Fresho</div>
 
@@ -29,12 +26,12 @@
         <span id="userEmail" aria-live="polite"></span>
         <a id="accountLink" href="account.html">Account <br /><strong>Login</strong></a>
         <a href="wishlist.html">Wishlist<br /><strong>My Items</strong></a>
-        <a href="cart.html" aria-current="page">Cart<br /><strong>Items</strong></a>
+        <a href="cart.html">Cart<br /><strong>Items</strong></a>
         <a href="payment.html">Payment</a>
       </div>
     </header>
 
-    <!-- Navigation Menu -->
+    <!-- Primary nav -->
     <nav class="nav-menu" role="navigation" aria-label="Primary">
       <a href="index.html">Home</a>
       <a href="products.html">Products</a>
@@ -42,24 +39,27 @@
       <a href="about.html">About Us</a>
     </nav>
 
-    <!-- Scrollområdet -->
-    <main>
+    <!-- Main -->
+    <main class="cart-page">
       <h1>Your Cart</h1>
 
-      <div class="cart-summary" aria-live="polite">
+      <!-- Product cards (filled by JS) -->
+      <section id="cartList" class="cart-grid" aria-label="Cart items"></section>
+
+      <!-- Summary at the bottom -->
+      <section class="cart-summary" id="cartSummary" aria-label="Cart summary">
         <div class="summary-left">
-          <span id="cartCount">0 items</span>
-          <strong id="cartTotal">0 kr</strong>
+          <strong id="cartCount">0 items</strong>
+          <span id="cartTotal">0 kr</span>
         </div>
         <div class="summary-right">
-          <button id="clearCartBtn" type="button">Clear Cart</button>
-          <a class="checkoutBtn" href="payment.html">Go to Checkout</a>
+          <button id="clearCartBtn" type="button">Clear cart</button>
+          <a class="checkoutBtn" href="payment.html">Checkout</a>
         </div>
-      </div>
-
-      <div id="cartList" class="cart-list"></div>
+      </section>
     </main>
 
+    <!-- Footer -->
     <footer role="contentinfo">
       <div id="copy">
         <p>&copy; 2025 Fresho. All rights reserved.</p>
@@ -67,6 +67,8 @@
     </footer>
   </div>
 
+  <!-- Scripts -->
+  <script src="nav.js" defer></script>
   <script src="cart.js" defer></script>
 </body>
 </html>

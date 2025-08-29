@@ -1,169 +1,133 @@
-// client/nav.js
+// client/cart.js
 document.addEventListener('DOMContentLoaded', async () => {
-  const accountLink = document.getElementById('accountLink');
-  const userEmailSpan = document.getElementById('userEmail'); // visar username eller email
+  const listEl = document.getElementById('cartList');
+  const countEl = document.getElementById('cartCount');   // valfritt i HTML
+  const totalEl = document.getElementById('cartTotal');   // valfritt i HTML
 
-  /* ===== Sök/autosuggest (oförändrat) ===== */
-  const searchWrap = document.querySelector('.search-container');
-  const searchInput = searchWrap?.querySelector('input');
-  const searchBtn   = searchWrap?.querySelector('.search-icon');
+  /* ---------- helpers ---------- */
+  const asKr = (n) => `${(Number(n) || 0).toFixed(2).replace(/\.00$/, '')} kr`;
 
-  const ALIAS_MAP = {
-    snacks: 'Snacks', snack: 'Snacks',
-    juice: 'Juice', juices: 'Juice', drink: 'Juice', drinks: 'Juice',
-    seafood: 'Seafood', fish: 'Seafood',
-    meat: 'Meat', meats: 'Meat',
-    grain: 'Grains', grains: 'Grains', cereal: 'Grains', pasta: 'Grains',
-    fruits: 'Fruits', fruit: 'Fruits'
-  };
-  const CATEGORY_LIST = ['Snacks', 'Juice', 'Seafood', 'Meat', 'Grains', 'Fruits'];
-
+  function getFallbackSvg() {
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450">
+        <rect width="100%" height="100%" fill="#f2f2f2"/>
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+              fill="#9ca3af" font-family="Arial,Helvetica,sans-serif" font-size="18">
+          No image
+        </text>
+      </svg>`
+    );
+  }
   function buildImgUrl(image) {
-    if (!image) return '/public/image/products/placeholder.png';
-    let s = String(image).trim();
-    s = s.replace(/^https?:\/\/[^/]+/i, '')
-         .replace(/^\/?public\/image\/products\//i, '')
-         .replace(/^\/?image\/products\//i, '')
-         .replace(/^\/?image\//i, '')
-         .replace(/^\/+/, '');
+    if (!image) return getFallbackSvg();
+    let s = String(image).trim()
+      .replace(/^https?:\/\/[^/]+/i, '')
+      .replace(/^\/?public\/image\/products\//i, '')
+      .replace(/^\/?image\/products\//i, '')
+      .replace(/^\/?image\//i, '')
+      .replace(/^\/+/, '');
     return `/public/image/products/${s}`;
   }
-
-  let suggBox = document.createElement('div'); suggBox.className = 'search-suggestions';
-  let list = document.createElement('ul'); suggBox.appendChild(list);
-  if (searchWrap) searchWrap.appendChild(suggBox);
-
-  let activeIndex = -1, currentItems = [];
-  const hideSugg = () => { suggBox.style.display = 'none'; activeIndex = -1; currentItems = []; list.innerHTML = ''; };
-  const showSugg = () => { suggBox.style.display = currentItems.length ? 'block' : 'none'; };
-  const selectItem = (i) => {
-    const it = currentItems[i]; if (!it) return;
-    const url = new URL('products.html', window.location.origin);
-    if (it.type === 'category') url.searchParams.set('categories', it.value);
-    else if (it.type === 'product') url.searchParams.set('q', it.value);
-    window.location.href = url.toString();
-  };
-  const renderSugg = () => {
-    list.innerHTML = '';
-    currentItems.forEach((it, i) => {
-      const li = document.createElement('li');
-      li.className = 'sugg-item' + (i === activeIndex ? ' active' : '');
-      li.setAttribute('data-index', i);
-      const left = document.createElement('div'); left.className = 'sugg-left';
-      if (it.type === 'product' && it.image) {
-        const img = document.createElement('img'); img.className = 'sugg-thumb';
-        img.src = buildImgUrl(it.image); img.alt = it.label; left.appendChild(img);
-      } else if (it.type === 'category') {
-        const badge = document.createElement('span'); badge.className = 'sugg-badge'; badge.textContent = 'Kategori'; left.appendChild(badge);
-      } else {
-        const dot = document.createElement('span'); dot.className = 'sugg-dot'; dot.textContent = '🔎'; left.appendChild(dot);
-      }
-      const txt = document.createElement('span'); txt.textContent = it.label; left.appendChild(txt);
-      li.appendChild(left);
-      li.addEventListener('mousedown', (e) => { e.preventDefault(); selectItem(i); });
-      list.appendChild(li);
+  function attachImgFallback(img) {
+    let used = false;
+    img.addEventListener('error', () => {
+      if (!used) { used = true; img.src = getFallbackSvg(); }
     });
-    showSugg();
-  };
-
-  let t; const debounce = (fn, ms = 150) => { clearTimeout(t); t = setTimeout(fn, ms); };
-  const fetchSuggest = async (prefix) => {
-    try {
-      const url = new URL('/api/products/suggest', window.location.origin);
-      url.searchParams.set('prefix', prefix); url.searchParams.set('limit', '8');
-      const res = await fetch(url.toString(), { credentials: 'include' });
-      if (!res.ok) return []; return await res.json();
-    } catch { return []; }
-  };
-  const handleInput = () => {
-    const val = (searchInput?.value || '').trim();
-    if (!val) return hideSugg();
-    debounce(async () => { const docs = await fetchSuggest(val); currentItems = buildItems(val, docs); activeIndex = -1; renderSugg(); }, 120);
-  };
-  function buildItems(prefix, productDocs) {
-    const p = prefix.toLowerCase();
-    const cats = CATEGORY_LIST.filter(c => c.toLowerCase().startsWith(p))
-      .map(c => ({ type:'category', label:`Kategori: ${c}`, value:c }));
-    const prods = (productDocs||[]).map(d => ({ type:'product', label:d.name, value:d.name, image:d.image, _id:d._id }));
-    return [...cats, ...prods].slice(0, 10);
   }
-  searchInput?.addEventListener('input', handleInput);
-  searchInput?.addEventListener('focus', handleInput);
-  searchInput?.addEventListener('keydown', (e) => {
-    if (!currentItems.length) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = (activeIndex + 1) % currentItems.length; renderSugg(); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex = (activeIndex - 1 + currentItems.length) % currentItems.length; renderSugg(); }
-    else if (e.key === 'Enter') { if (activeIndex >= 0) { e.preventDefault(); selectItem(activeIndex); } else { goSearch(); } }
-    else if (e.key === 'Escape') { hideSugg(); }
-  });
-  searchInput?.addEventListener('blur', () => setTimeout(hideSugg, 120));
-  const parseSearch = (raw) => {
-    const tokens = raw.split(/[,\s]+/).map(t => t.trim()).filter(Boolean);
-    const cats = [], leftovers = [];
-    tokens.forEach(tok => { const c = ALIAS_MAP[tok.toLowerCase()]; if (c) { if (!cats.includes(c)) cats.push(c); } else leftovers.push(tok); });
-    return { categories: cats, q: leftovers.join(' ').trim() };
-  };
-  const goSearch = () => {
-    if (!searchInput) return;
-    const term = searchInput.value.trim();
-    const url = new URL('products.html', window.location.origin);
-    if (term) {
-      const { categories, q } = parseSearch(term);
-      if (categories.length) url.searchParams.set('categories', categories.join(','));
-      if (q) url.searchParams.set('q', q);
-    }
-    window.location.href = url.toString();
-  };
-  searchBtn?.addEventListener('click', goSearch);
+  function renderEmpty(msg = 'Your cart is empty.') {
+    if (listEl) listEl.innerHTML = `<p>${msg}</p>`;
+    if (countEl) countEl.textContent = '0 items';
+    if (totalEl) totalEl.textContent = asKr(0);
+  }
 
-  /* =======================
-     Login / Logout-toggle
-  ======================= */
-  const setLoggedOutUI = () => {
-    if (accountLink) {
-      accountLink.innerHTML = 'Account <br /><strong>Login</strong>';
-      accountLink.href = 'account.html';
-      accountLink.onclick = null;
-    }
-    if (userEmailSpan) { userEmailSpan.textContent = ''; userEmailSpan.removeAttribute('title'); }
-    localStorage.removeItem('email');
-    localStorage.removeItem('username');
-  };
-
-  const attachLogout = ({ username, email }) => {
-    // ✅ Visa username om det finns, annars email
-    if (userEmailSpan) {
-      userEmailSpan.textContent = username || email || '';
-      userEmailSpan.title = email || username || '';
-    }
-    if (!accountLink) return;
-    accountLink.innerHTML = 'Account <br /><strong>Logout</strong>';
-    accountLink.href = '#';
-    accountLink.onclick = async (e) => {
-      e.preventDefault();
-      try { await fetch('/api/account/logout', { method: 'POST', credentials: 'include' }); } catch {}
-      setLoggedOutUI();
-      window.location.href = 'index.html';
-    };
-  };
-
-  // Snabb UI från localStorage
-  const lsUser = { username: localStorage.getItem('username') || '', email: localStorage.getItem('email') || '' };
-  if (lsUser.username || lsUser.email) attachLogout(lsUser);
-
-  // Verifiera server-session
+  /* ---------- load session & cart ---------- */
   try {
-    const res = await fetch('/api/account/session', { credentials: 'include' });
-    if (res.ok) {
-      const data = await res.json(); // { email, username }
-      localStorage.setItem('email', data.email || '');
-      localStorage.setItem('username', data.username || '');
-      attachLogout({ username: data.username || '', email: data.email || '' });
-    } else {
-      setLoggedOutUI();
+    const sessionRes = await fetch('/api/account/session', { credentials: 'include' });
+    if (!sessionRes.ok) { window.location.href = 'account.html'; return; }
+
+    const res = await fetch('/api/cart', { credentials: 'include' });
+    if (!res.ok) throw new Error('Could not fetch cart');
+    const products = await res.json();
+
+    if (!Array.isArray(products) || products.length === 0) {
+      renderEmpty();
+      return;
+    }
+
+    // render cards in a responsive grid (matches cart.css)
+    listEl.innerHTML = '';
+    let total = 0;
+
+    const removeFromCart = async (id, card) => {
+      try {
+        const r = await fetch(`/api/cart/${id}`, { method: 'PATCH', credentials: 'include' });
+        if (!r.ok) throw new Error('Failed to update cart');
+        // remove card from DOM and recalc
+        card.remove();
+        recalc();
+      } catch (e) {
+        console.error(e);
+        alert(e.message || 'Failed to update cart');
+      }
+    };
+
+    products.forEach(p => {
+      total += Number(p.price) || 0;
+
+      const card = document.createElement('article');
+      card.className = 'cart-item';
+
+      const img = document.createElement('img');
+      img.src = buildImgUrl(p.image);
+      img.alt = p.name;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      if (img.src.startsWith('/public/')) attachImgFallback(img);
+
+      const name = document.createElement('h3');
+      name.textContent = p.name;
+
+      const price = document.createElement('p');
+      price.className = 'price';
+      price.textContent = asKr(p.price);
+
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', () => removeFromCart(p._id, card));
+
+      actions.appendChild(removeBtn);
+
+      card.appendChild(img);
+      card.appendChild(name);
+      card.appendChild(price);
+      card.appendChild(actions);
+      listEl.appendChild(card);
+    });
+
+    // initial totals
+    if (countEl) countEl.textContent = `${products.length} ${products.length === 1 ? 'item' : 'items'}`;
+    if (totalEl) totalEl.textContent = asKr(total);
+
+    // recalc totals after removals
+    function recalc() {
+      const cards = Array.from(listEl.querySelectorAll('.cart-item'));
+      if (cards.length === 0) { renderEmpty(); return; }
+
+      const prices = cards.map(c => c.querySelector('.price')?.textContent || '0');
+      const sum = prices.reduce((acc, txt) => {
+        const num = Number(String(txt).replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+        return acc + num;
+      }, 0);
+
+      if (countEl) countEl.textContent = `${cards.length} ${cards.length === 1 ? 'item' : 'items'}`;
+      if (totalEl) totalEl.textContent = asKr(sum);
     }
   } catch (err) {
-    console.error('Fel vid kontroll av session:', err);
-    if (!lsUser.username && !lsUser.email) setLoggedOutUI();
+    console.error('Failed to load cart:', err);
+    renderEmpty('You must be logged in to view your cart.');
   }
 });

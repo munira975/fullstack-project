@@ -1,6 +1,10 @@
 // client/cart.js
 document.addEventListener('DOMContentLoaded', async () => {
-  const listEl = document.getElementById('cartList');
+  const listEl   = document.getElementById('cartList');
+  const countEl  = document.getElementById('cartCount');
+  const totalEl  = document.getElementById('cartTotal');
+  const clearBtn = document.getElementById('clearCartBtn');
+  const summary  = document.getElementById('cartSummary');
 
   function buildImgUrl(image) {
     if (!image) return getFallbackSvg();
@@ -30,28 +34,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   const asKr = (n) => `${(Number(n)||0).toFixed(2).replace(/\.00$/,'')} kr`;
 
-  const renderEmpty = (msg='Your cart is empty.') => {
+  const showEmpty = (msg = 'Your cart is empty.') => {
     listEl.innerHTML = `<p>${msg}</p>`;
+    countEl.textContent = '0 items';
+    totalEl.textContent = '0 kr';
+    summary.style.display = 'none';
   };
 
-  try {
-    const sessionRes = await fetch('/api/account/session', { credentials:'include' });
-    if (!sessionRes.ok) { window.location.href='account.html'; return; }
-
-    const res = await fetch('/api/cart', { credentials:'include' });
-    if (!res.ok) throw new Error('Could not fetch cart');
-    const products = await res.json();
-
-    if (!Array.isArray(products) || products.length === 0) { renderEmpty(); return; }
-
+  const render = (products) => {
     listEl.innerHTML = '';
     let total = 0;
 
-    products.forEach(p => {
-      total += Number(p.price)||0;
+    products.forEach((p) => {
+      total += Number(p.price) || 0;
 
-      const row = document.createElement('div');
-      row.className = 'cart-row';
+      const card = document.createElement('article');
+      card.className = 'cart-card';
 
       const img = document.createElement('img');
       img.src = buildImgUrl(p.image);
@@ -66,34 +64,69 @@ document.addEventListener('DOMContentLoaded', async () => {
       price.className = 'price';
       price.textContent = asKr(p.price);
 
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
       const removeBtn = document.createElement('button');
       removeBtn.className = 'remove';
       removeBtn.textContent = 'Remove';
       removeBtn.addEventListener('click', async () => {
         try {
-          const r = await fetch(`/api/products/${p._id}/cart`, { method:'PATCH', credentials:'include' });
-          if (r.ok) location.reload();
-        } catch {}
+          const r = await fetch(`/api/cart/${p._id}`, { method: 'PATCH', credentials: 'include' });
+          if (!r.ok) throw new Error('Failed to update cart');
+          card.remove();
+          // Update counters
+          const left = listEl.querySelectorAll('.cart-card').length;
+          if (left === 0) { showEmpty(); return; }
+          total -= Number(p.price) || 0;
+          countEl.textContent = `${left} ${left === 1 ? 'item' : 'items'}`;
+          totalEl.textContent = asKr(total);
+        } catch (e) {
+          console.error(e);
+          alert('Could not remove item from cart.');
+        }
       });
 
-      row.appendChild(img);
-      row.appendChild(name);
-      row.appendChild(price);
-      row.appendChild(removeBtn);
-      listEl.appendChild(row);
+      actions.appendChild(removeBtn);
+      card.appendChild(img);
+      card.appendChild(name);
+      card.appendChild(price);
+      card.appendChild(actions);
+      listEl.appendChild(card);
     });
 
-    // Visa total om du har ett element för det (lägg till i cart.html om saknas)
-    let totalEl = document.getElementById('totalPrice');
-    if (!totalEl) {
-      totalEl = document.createElement('div');
-      totalEl.id = 'totalPrice';
-      totalEl.className = 'cart-total';
-      listEl.insertAdjacentElement('afterend', totalEl);
-    }
-    totalEl.textContent = `Total: ${asKr(total)}`;
+    countEl.textContent = `${products.length} ${products.length === 1 ? 'item' : 'items'}`;
+    totalEl.textContent = asKr(total);
+    summary.style.display = 'flex';
+  };
+
+  try {
+    // Require login
+    const sessionRes = await fetch('/api/account/session', { credentials: 'include' });
+    if (!sessionRes.ok) { window.location.href = 'account.html'; return; }
+
+    // Load cart
+    const res = await fetch('/api/cart', { credentials: 'include' });
+    if (!res.ok) throw new Error('Could not fetch cart');
+    const products = await res.json();
+
+    if (!Array.isArray(products) || products.length === 0) { showEmpty(); }
+    else { render(products); }
+
+    // Clear cart (bottom)
+    clearBtn.addEventListener('click', async () => {
+      if (!confirm('Clear the entire cart?')) return;
+      try {
+        const r = await fetch('/api/cart/clear', { method: 'DELETE', credentials: 'include' });
+        if (!r.ok) throw new Error('Failed to clear cart');
+        showEmpty();
+      } catch (e) {
+        console.error(e);
+        alert('Could not clear cart.');
+      }
+    });
   } catch (err) {
     console.error('Failed to load cart:', err);
-    renderEmpty('You must be logged in to view your cart.');
+    showEmpty('You must be logged in to view your cart.');
   }
 });

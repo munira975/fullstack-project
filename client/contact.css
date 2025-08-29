@@ -1,5 +1,4 @@
 /* client/contact.css */
-/* OBS: Topbar/Nav/Footer + layout finns i nav.css. Detta är bara sidans innehåll. */
 
 main > h1 {
   text-align: center;
@@ -7,14 +6,12 @@ main > h1 {
   font-size: 2rem;
 }
 
-/* Två kolumner: info + formulär */
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
 }
 
-/* Kort */
 .card {
   background: #fff;
   border: 1px solid #e6e6e6;
@@ -29,7 +26,6 @@ main > h1 {
   margin-bottom: 12px;
 }
 
-/* Info-rader */
 .info-row {
   display: grid;
   grid-template-columns: 120px 1fr;
@@ -39,7 +35,6 @@ main > h1 {
 .info-label { color: #666; }
 .info-value a { color: inherit; }
 
-/* Karta/bild-plats */
 .map-placeholder {
   margin-top: 16px;
   height: 180px;
@@ -51,7 +46,6 @@ main > h1 {
   font-size: 0.95rem;
 }
 
-/* Formulär */
 .field {
   margin-bottom: 12px;
 }
@@ -82,7 +76,6 @@ main > h1 {
   margin-top: 4px;
 }
 
-/* Alert/Meddelande */
 .alert {
   min-height: 20px;
   margin-bottom: 10px;
@@ -92,7 +85,6 @@ main > h1 {
 .alert.success { color: #1e7e34; }
 .alert.error   { color: #e74c3c; }
 
-/* Knappar */
 .actions {
   display: flex;
   gap: 10px;

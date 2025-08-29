@@ -110,14 +110,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       cart.addEventListener('click', async () => {
         try {
-          const r = await fetch(`/api/products/${p._id}/cart`, { method:'PATCH', credentials:'include' });
-          if (!r.ok) throw 0;
+          const r = await fetch(`/api/cart/${p._id}`, {
+            method: 'PATCH',
+            credentials: 'include'
+          });
           const data = await r.json();
+          if (!r.ok) {
+            if (r.status === 401) {
+              alert('Please log in to use the cart.');
+              location.href = 'account.html';
+              return;
+            }
+            throw new Error(data?.error?.message || data?.message || 'Failed to update cart');
+          }
           p.inCart = !!data.inCart;
           cart.textContent = p.inCart ? '🛒✓' : '🛒';
           cart.classList.toggle('on', p.inCart);
-        } catch {}
+        } catch (err) {
+          console.error(err);
+          alert(err.message || 'Failed to update cart');
+        }
       });
+
 
       actions.appendChild(heart);
       actions.appendChild(cart);

@@ -112,6 +112,17 @@ app.use('/api/products', productRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/cart', cartRoutes);
 
+app.post('/api/contact', (req, res) => {
+  const { name, email, subject, message, ts } = req.body || {};
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({ message: 'Missing fields' });
+  }
+
+  console.log('📬 Contact message received:', { name, email, subject, message, ts });
+
+  return res.status(204).end(); 
+});
+
 /* Healthcheck & 404 */
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/*', (_req, res) => res.status(404).json({ message: 'Not found' }));

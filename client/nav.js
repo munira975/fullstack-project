@@ -14,9 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     seafood: 'Seafood', fish: 'Seafood',
     meat: 'Meat', meats: 'Meat',
     grain: 'Grains', grains: 'Grains', cereal: 'Grains', pasta: 'Grains',
-    fruits: 'Fruits', fruit: 'Fruits'
+    fruits: 'Fruits', fruit: 'Fruits',
+    egetables: 'Vegetables', vegetable: 'Vegetables',
   };
-  const CATEGORY_LIST = ['Snacks', 'Juice', 'Seafood', 'Meat', 'Grains', 'Fruits'];
+  const CATEGORY_LIST = ['Snacks', 'Juice', 'Seafood', 'Meat', 'Grains', 'Fruits', 'Vegetables'];
 
 
   function buildImgUrl(image) {

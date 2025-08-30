@@ -12,7 +12,8 @@ const CATEGORY_MAP = {
   seafood: 'Seafood',
   meat: 'Meat',
   grains: 'Grains',
-  fruits: 'Fruits',   
+  fruits: 'Fruits',  
+  vegetables: 'Vegetables', 
 };
 
 const sanitizeLimit = (v, def = 100, max = 200) => {

@@ -1,7 +1,7 @@
 // server/models/product.js
 import mongoose from 'mongoose';
 
-export const ALLOWED_CATEGORIES = ['Snacks', 'Juice', 'Seafood', 'Meat', 'Grains', 'Fruits'];
+export const ALLOWED_CATEGORIES = ['Snacks', 'Juice', 'Seafood', 'Meat', 'Grains', 'Fruits', 'Vegetables'];
 
 const productSchema = new mongoose.Schema(
   {

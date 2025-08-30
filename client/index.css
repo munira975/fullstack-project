@@ -1,7 +1,5 @@
 /* client/index.css */
-/* OBS: Topbar/Nav/Footer finns i nav.css. Detta är bara sidans innehåll. */
 
-/* === Hero Section: Side-by-side === */
 .hero-section {
   display: flex;
   justify-content: center;
@@ -33,7 +31,6 @@
   object-fit: cover;
 }
 
-/* Overlay-objekt på heron */
 .ellipse {
   position: absolute;
   width: 250px;
@@ -141,7 +138,7 @@
 }
 .shop-now2-text { font-size: 15px; font-weight: bold; text-decoration: none; color: #000; }
 
-/* === Product Categories === */
+/* Product Categories */
 .categories {
   position: relative;
   width: 1130px;
@@ -190,14 +187,14 @@
   margin: 0 auto 10px auto;
 }
 
-/* Positionerade kort */
+
 .category-snack   { top: 18px; left: 23px; }
 .category-juice   { top: 18px; left: 250px; }
 .category-seafood { top: 18px; left: 477px; }
 .category-meat    { top: 18px; left: 705px; }
 .category-grains  { top: 18px; left: 930px; }
 
-/* Responsivt */
+/* Responsive */
 @media (max-width: 1000px) {
   .hero-section { flex-direction: column; align-items: center; }
   .promo-left, .promo-right { max-width: 90%; }

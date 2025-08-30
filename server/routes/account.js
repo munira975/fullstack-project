@@ -13,11 +13,11 @@ function sendErr(res, code, message, details) {
   return res.status(code).json({ error: { code, message, details } });
 }
 
-/* ===== Create account ===== */
+/* Create account */
 router.post('/create', async (req, res) => {
   const email = normEmail(req.body?.email);
   const password = norm(req.body?.password);
-  const confirmPassword = norm(req.body?.confirmPassword); // optional from client
+  const confirmPassword = norm(req.body?.confirmPassword); 
   const username = norm(req.body?.username);
 
   if (!email || !password || !username) {
@@ -35,7 +35,6 @@ router.post('/create', async (req, res) => {
   }
 
   try {
-    // Only check email for uniqueness (usernames can repeat)
     const existing = await Account.findOne({ email }).lean();
     if (existing) {
       return sendErr(res, 409, 'Email already in use.');
@@ -57,7 +56,7 @@ router.post('/create', async (req, res) => {
       username: account.username,
     });
   } catch (err) {
-    console.error('❌ Error during creation:', err);
+    console.error('Error during creation:', err);
     if (err?.code === 11000) {
       if (err.keyPattern?.email) return sendErr(res, 409, 'Email already in use.');
       return sendErr(res, 409, 'Already in use.');
@@ -70,7 +69,7 @@ router.post('/create', async (req, res) => {
   }
 });
 
-/* ===== Login ===== */
+/*Login*/
 router.post('/', async (req, res) => {
   const email = normEmail(req.body?.email);
   const password = norm(req.body?.password);
@@ -92,19 +91,19 @@ router.post('/', async (req, res) => {
       username: account.username,
     });
   } catch (err) {
-    console.error('❌ Login error:', err);
+    console.error('Login error:', err);
     return sendErr(res, 500, 'Server error');
   }
 });
 
-/* ===== Session ===== */
+/*Session*/
 router.get('/session', (req, res) => {
   const u = req.session?.user;
   if (u?.email) return res.json({ email: u.email, username: u.username });
   return sendErr(res, 401, 'Not signed in');
 });
 
-/* ===== Logout ===== */
+/*Logout*/
 router.post('/logout', (req, res) => {
   req.session.destroy(() => {
     res.clearCookie(COOKIE_NAME);
@@ -112,27 +111,5 @@ router.post('/logout', (req, res) => {
   });
 });
 
-/* ===== Delete account (signed-in) ===== */
-router.delete('/', async (req, res) => {
-  try {
-    const email = req.session?.user?.email;
-    if (!email) return sendErr(res, 401, 'Not signed in');
-
-    const confirmText = req.body?.confirmText;
-    if (confirmText !== 'DELETE') {
-      return sendErr(res, 400, "The confirmation text must be 'DELETE'.");
-    }
-
-    await Account.deleteOne({ email });
-
-    req.session.destroy(() => {
-      res.clearCookie(COOKIE_NAME);
-      return res.status(200).json({ message: 'Account deleted', success: true });
-    });
-  } catch (err) {
-    console.error('❌ Delete account failed:', err);
-    return sendErr(res, 500, 'Server error');
-  }
-});
 
 export default router;

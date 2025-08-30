@@ -1,7 +1,5 @@
 /* client/products.css */
-/* OBS: header/nav/footer och layout för scroll ligger i nav.css */
 
-/* Force: <main> ska centreras med kontrollerad maxbredd */
 .page > main {
   width: min(100%, 1440px);
   margin-inline: auto;
@@ -14,14 +12,14 @@
   .page > main { width: min(100%, 1600px); }
 }
 
-/* Rubrik */
+
 main > h1 {
   text-align: center;
   margin: 16px 0 0;
   font-size: 2rem;
 }
 
-/* 5 produkter sida vid sida på desktop */
+
 .product-list {
   display: grid;
   grid-template-columns: repeat(5, minmax(180px, 1fr));
@@ -60,7 +58,7 @@ main > h1 {
   margin-bottom: 8px;
 }
 
-/* Knapprad */
+
 .actions {
   display: flex;
   justify-content: center;
@@ -82,7 +80,7 @@ main > h1 {
 .actions .heart.on { background: #ffe6ea; border-color: #ffb3c2; }
 .actions .cart.on  { background: #e8f5e9; border-color: #a5d6a7; }
 
-/* Responsiv nedskalning av antal kolumner */
+
 @media (max-width: 1200px) {
   .product-list { grid-template-columns: repeat(4, minmax(180px, 1fr)); }
 }

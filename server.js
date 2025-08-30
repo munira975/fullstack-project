@@ -23,7 +23,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-/* ---- CORS origins ---- */
+/* CORS origins */
 const rawOrigins =
   process.env.FRONTEND_ORIGINS ||
   process.env.CORS_ORIGINS ||
@@ -38,9 +38,9 @@ const ORIGINS = rawOrigins.split(',').map(s => s.trim()).filter(Boolean);
 
 const corsOptions = {
   origin: (origin, cb) => {
-    if (!origin) return cb(null, true); // same-origin requests have no Origin
+    if (!origin) return cb(null, true); 
     if (ORIGINS.includes(origin)) return cb(null, true);
-    console.warn(`🚫 CORS blocked: ${origin} (allowed: ${ORIGINS.join(', ')})`);
+    console.warn(`CORS blocked: ${origin} (allowed: ${ORIGINS.join(', ')})`);
     return cb(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
@@ -51,7 +51,7 @@ app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ---- Session cookie ---- */
+/*Session cookie*/
 const SECURE_COOKIES = String(process.env.SECURE_COOKIES || '').toLowerCase() === 'true';
 if (SECURE_COOKIES) app.set('trust proxy', 1);
 
@@ -64,21 +64,19 @@ app.use(session({
     httpOnly: true,
     sameSite: SECURE_COOKIES ? 'none' : 'lax',
     secure: SECURE_COOKIES,
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
+    maxAge: 1000 * 60 * 60 * 24, 
   },
 }));
 
-/* ---- Static directories ---- */
+/* Static directories */
 const CLIENT_DIR = path.join(__dirname, 'client');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const PUBLIC_IMAGE_DIR = path.join(PUBLIC_DIR, 'image');
 
-// Fallback candidates if images ended up under client/
 const CLIENT_PUBLIC_IMAGE_DIR = path.join(CLIENT_DIR, 'public', 'image');
 const CLIENT_IMAGE_DIR        = path.join(CLIENT_DIR, 'image');
 
-// Log where we serve static assets from
-console.log('🗂  Static roots:');
+console.log('  Static roots:');
 console.log('  /public            ->', PUBLIC_DIR);
 console.log('  /public/image (*)  ->', PUBLIC_IMAGE_DIR, fs.existsSync(PUBLIC_IMAGE_DIR) ? '(exists)' : '(missing)');
 console.log('  /public/image (alt)->', CLIENT_PUBLIC_IMAGE_DIR, fs.existsSync(CLIENT_PUBLIC_IMAGE_DIR) ? '(exists)' : '(missing)');
@@ -91,10 +89,10 @@ app.use('/public/image', express.static(PUBLIC_IMAGE_DIR));
 app.use('/public/image', express.static(CLIENT_PUBLIC_IMAGE_DIR));
 app.use('/public/image', express.static(CLIENT_IMAGE_DIR));
 
-// Serve client assets (html/css/js)
+// Client assets (html/css/js)
 app.use(express.static(CLIENT_DIR));
 
-/* ---- Explicit client page routes (fixes navigation to about/products/etc.) ---- */
+// Client page routes 
 const sendClient = (page) => (_req, res) => res.sendFile(path.join(CLIENT_DIR, page));
 app.get('/', sendClient('index.html'));
 app.get('/index.html', sendClient('index.html'));
@@ -106,7 +104,7 @@ app.get('/cart.html', sendClient('cart.html'));
 app.get('/wishlist.html', sendClient('wishlist.html'));
 app.get('/payment.html', sendClient('payment.html'));
 
-/* ---- API ---- */
+// API 
 app.use('/api/account', accountRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/wishlist', wishlistRoutes);
@@ -129,28 +127,27 @@ app.use('/api/*', (_req, res) => res.status(404).json({ message: 'Not found' }))
 
 /* Global error handler */
 app.use((err, _req, res, _next) => {
-  console.error('❌ Unhandled error:', err?.message || err);
+  console.error('Unhandled error:', err?.message || err);
   res.status(500).json({ message: 'Server error' });
 });
 
-/* ---- Start ---- */
+
 (async () => {
   try {
     if (!process.env.MONGO_URI) {
-      console.error('❌ MONGO_URI is missing in .env');
+      console.error('MONGO_URI is missing in .env');
       process.exit(1);
     }
-    // Remove deprecated options; driver v4+ ignores them anyway
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ Connected to MongoDB');
+    console.log('Connected to MongoDB');
     app.listen(PORT, () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
-      console.log('🌐 CORS allowlist:', ORIGINS.join(', '));
-      console.log('🔐 Cookies:', `sameSite=${SECURE_COOKIES ? 'none' : 'lax'}, secure=${SECURE_COOKIES}`);
-      console.log('🏷️ NODE_ENV:', NODE_ENV);
+      console.log(`Server running at http://localhost:${PORT}`);
+      console.log('CORS allowlist:', ORIGINS.join(', '));
+      console.log('Cookies:', `sameSite=${SECURE_COOKIES ? 'none' : 'lax'}, secure=${SECURE_COOKIES}`);
+      console.log('NODE_ENV:', NODE_ENV);
     });
   } catch (err) {
-    console.error('❌ MongoDB connection error:', err);
+    console.error('MongoDB connection error:', err);
     process.exit(1);
   }
 })();

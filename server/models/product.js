@@ -1,7 +1,6 @@
 // server/models/product.js
 import mongoose from 'mongoose';
 
-// 6 kategorier
 export const ALLOWED_CATEGORIES = ['Snacks', 'Juice', 'Seafood', 'Meat', 'Grains', 'Fruits'];
 
 const productSchema = new mongoose.Schema(
@@ -10,8 +9,7 @@ const productSchema = new mongoose.Schema(
     price:  { type: Number, required: true, min: 0 },
     stock:  { type: Number, required: true, min: 0 },
     category_id: { type: String, required: true, enum: ALLOWED_CATEGORIES, index: true },
-    // image är ENDAST filnamn, ex: "snack-chips.png"
-    // Klienten visar via /public/image/products/<filnamn>
+
     image: {
       type: String,
       required: true,

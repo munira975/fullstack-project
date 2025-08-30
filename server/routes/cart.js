@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 
     return res.json(items);
   } catch (err) {
-    console.error('❌ Error fetching cart:', err);
+    console.error('Error fetching cart:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
@@ -48,11 +48,9 @@ router.patch('/:id', async (req, res) => {
   }
 
   try {
-    // Need a document (not lean) to modify and save
     const account = await Account.findOne({ email });
     if (!account) return res.status(404).json({ message: 'Account not found' });
 
-    // Ensure list exists; work on a copy and assign back
     const list = Array.isArray(account.cart) ? [...account.cart] : [];
 
     const idx = list.findIndex(id => String(id) === productId);
@@ -65,12 +63,12 @@ router.patch('/:id', async (req, res) => {
       inCart = false;
     }
 
-    account.cart = list; // <- important
+    account.cart = list; 
     await account.save();
 
     return res.json({ success: true, inCart });
   } catch (err) {
-    console.error('❌ Error updating cart:', err);
+    console.error('Error updating cart:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
@@ -88,7 +86,7 @@ router.delete('/clear', async (req, res) => {
     await account.save();
     return res.json({ message: 'Cart cleared' });
   } catch (err) {
-    console.error('❌ Error clearing cart:', err);
+    console.error('Error clearing cart:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });

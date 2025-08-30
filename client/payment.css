@@ -1,7 +1,5 @@
 /* client/payment.css */
-/* OBS: Topbar/Nav/Footer + layout finns i nav.css. Detta är bara sidans innehåll. */
 
-/* Styr bredden på main och centrera (överstyr gridens stretch) */
 .page > main {
   width: min(100%, 1440px);
   margin-inline: auto;
@@ -10,21 +8,21 @@
   box-sizing: border-box;
 }
 
-/* Rubrik */
+
 main > h1 {
   text-align: center;
   margin: 8px 0 16px;
   font-size: 2rem;
 }
 
-/* Layout för betalningssektionen (två kolumner) */
+
 .payment-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
 }
 
-/* Kort (vänster/höger) */
+
 .qr-card,
 .summary-card {
   background: #fff;
@@ -70,7 +68,7 @@ main > h1 {
   gap: 10px;
 }
 
-/* Rad i summeringen */
+
 .summary-item {
   display: grid;
   grid-template-columns: 72px 1fr auto;
@@ -94,7 +92,7 @@ main > h1 {
   white-space: nowrap;
 }
 
-/* Footer med total & länk */
+
 .summary-footer {
   margin-top: 14px;
   display: flex;
@@ -111,7 +109,7 @@ main > h1 {
   border-radius: 8px;
 }
 
-/* Responsiv */
+/* Responsive */
 @media (max-width: 900px) {
   .payment-grid {
     grid-template-columns: 1fr;

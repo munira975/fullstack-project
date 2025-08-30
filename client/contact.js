@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      // Försök POSTa till backend (lägg ev. till route /api/contact)
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -73,12 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Fallback: öppna e-postklient med mailto
       fallbackMailto(payload);
       setAlert('We opened your email client as a fallback. You can send the message from there.', 'success');
       form.reset();
     } catch (err) {
-      // Fallback vid nätverksfel
       fallbackMailto(payload);
       setAlert('We opened your email client as a fallback. You can send the message from there.', 'success');
       form.reset();
@@ -86,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function fallbackMailto({ name, email, subject, message }) {
-    const TO = 'support@example.com'; // <-- byt till din riktiga supportadress
+    const TO = 'support@example.com'; 
     const s  = encodeURIComponent(`[Fresho] ${subject}`);
     const b  = encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\n\n${message}\n\n— Sent from Fresho Contact Page`
@@ -94,6 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = `mailto:${TO}?subject=${s}&body=${b}`;
   }
 
-  // Rensa alert på reset
+  
   form.addEventListener('reset', () => setAlert('', ''));
 });

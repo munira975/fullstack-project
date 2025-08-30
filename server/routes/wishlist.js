@@ -15,7 +15,7 @@ const toValidObjectIds = (list) => {
   return ids;
 };
 
-/* GET /api/wishlist – hämta wishlist */
+/* GET /api/wishlist */
 router.get('/', async (req, res) => {
   const email = req.session.user?.email;
   if (!email) return res.status(401).json({ message: 'Not logged in' });
@@ -33,12 +33,12 @@ router.get('/', async (req, res) => {
 
     return res.json(products);
   } catch (err) {
-    console.error('❌ Error fetching wishlist:', err);
+    console.error('Error fetching wishlist:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
 
-/* PATCH /api/wishlist/:id – toggle */
+/* PATCH /api/wishlist/:id */
 router.patch('/:id', async (req, res) => {
   const email = req.session.user?.email;
   if (!email) return res.status(401).json({ message: 'Not logged in' });
@@ -65,12 +65,12 @@ router.patch('/:id', async (req, res) => {
     await account.save();
     return res.json({ heart });
   } catch (err) {
-    console.error('❌ Error updating wishlist:', err);
+    console.error('Error updating wishlist:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });
 
-/* DELETE /api/wishlist/clear – rensa wishlist */
+/* DELETE /api/wishlist/clear */
 router.delete('/clear', async (req, res) => {
   const email = req.session.user?.email;
   if (!email) return res.status(401).json({ message: 'Not logged in' });
@@ -84,7 +84,7 @@ router.delete('/clear', async (req, res) => {
 
     return res.json({ message: 'Wishlist cleared' });
   } catch (err) {
-    console.error('❌ Error clearing wishlist:', err);
+    console.error('Error clearing wishlist:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 });

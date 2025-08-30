@@ -1,6 +1,6 @@
 // client/wishlist.js
 document.addEventListener('DOMContentLoaded', async () => {
-  const grid = document.getElementById('wishlistItems'); // matchar wishlist.html
+  const grid = document.getElementById('wishlistItems'); 
 
   function buildImgUrl(image) {
     if (!image) return getFallbackSvg();

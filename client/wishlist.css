@@ -1,7 +1,5 @@
 /* client/wishlist.css */
-/* OBS: Topbar/Nav/Footer + layout finns i nav.css. Detta är bara sidans innehåll. */
 
-/* Styr bredden på main och centrera (överstyr gridens stretch) */
 .page > main {
   width: min(100%, 1440px);
   margin-inline: auto;
@@ -10,14 +8,14 @@
   box-sizing: border-box;
 }
 
-/* Rubrik */
+
 main > h1 {
   text-align: center;
   margin: 8px 0 8px;
   font-size: 2rem;
 }
 
-/* 5-kolumners grid (matchar products-sidan) */
+
 .product-list {
   display: grid;
   grid-template-columns: repeat(5, minmax(180px, 1fr));
@@ -25,7 +23,7 @@ main > h1 {
   padding: 20px 0;
 }
 
-/* Produktkort */
+
 .product-card {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -56,7 +54,7 @@ main > h1 {
   margin-bottom: 10px;
 }
 
-/* Hjärta-ikon */
+
 .heart-icon {
   font-size: 24px;
   cursor: pointer;
@@ -66,7 +64,7 @@ main > h1 {
 }
 .heart-icon:hover { transform: scale(1.2); }
 
-/* Responsiv nedskalning av kolumner */
+/* Responsive*/
 @media (max-width: 1200px) {
   .product-list { grid-template-columns: repeat(4, minmax(180px, 1fr)); }
 }

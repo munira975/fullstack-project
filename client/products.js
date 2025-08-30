@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const grid = document.getElementById('productsGrid');
   const title = document.getElementById('pageTitle');
 
-  // Normaliserar DB-värdet till /public/image/products/<filnamn>
   function buildImgUrl(image) {
     if (!image) return getFallbackSvg();
     let s = String(image).trim();
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     return `/public/image/products/${s}`;
   }
 
-  // Inline SVG – ingen nätverksbegäran
   function getFallbackSvg() {
     return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450">
@@ -29,7 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   }
 
-  // Sätt EN gång – ingen 404-spam
   function attachImgFallback(img) {
     let used = false;
     img.addEventListener('error', () => {
@@ -74,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       img.alt = p.name;
       img.loading = 'lazy';
       img.src = buildImgUrl(p.image);
-      // om /public/... inte finns -> inline
       if (img.src.startsWith('/public/')) attachImgFallback(img);
 
       const name = document.createElement('h3');

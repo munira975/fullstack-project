@@ -1,6 +1,5 @@
 // client/account.js
 
-// Helpers
 const $ = (id) => document.getElementById(id);
 const setMsg = (text, isErr = false) => {
   const m = $('message');
@@ -18,7 +17,7 @@ const parseErr = async (res) => {
   }
 };
 
-// ===== Login =====
+// Login
 const loginForm = $('loginForm');
 if (loginForm) {
   loginForm.addEventListener('submit', async (e) => {
@@ -38,7 +37,7 @@ if (loginForm) {
       });
       if (!res.ok) return setMsg(await parseErr(res), true);
 
-      const data = await res.json(); // { message, email, username }
+      const data = await res.json(); 
       localStorage.setItem('email', data.email || '');
       localStorage.setItem('username', data.username || '');
       location.href = 'index.html';
@@ -50,7 +49,7 @@ if (loginForm) {
   });
 }
 
-// ===== Create Account (med username + bekräfta lösenord) =====
+// Create Account
 const createForm = $('createForm');
 if (createForm) {
   createForm.addEventListener('submit', async (e) => {
@@ -63,7 +62,7 @@ if (createForm) {
     const password = $('createPassword')?.value;
     const confirmPassword = $('createPasswordConfirm')?.value;
 
-    // Klientside-validering
+    // Validation
     if (!username || !email || !password || !confirmPassword) {
       setMsg('Fill in all fields.', true);
       setBusy('createBtn', false);
@@ -80,12 +79,11 @@ if (createForm) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        // Skicka med confirmPassword också – servern validerar om det finns
         body: JSON.stringify({ username, email, password, confirmPassword }),
       });
       if (!res.ok) return setMsg(await parseErr(res), true);
 
-      const data = await res.json(); // { message, email, username }
+      const data = await res.json(); 
       localStorage.setItem('email', data.email || '');
       localStorage.setItem('username', data.username || '');
       location.href = 'index.html';
@@ -97,7 +95,7 @@ if (createForm) {
   });
 }
 
-// (valfritt) Hämta session vid sidladdning
+
 (async () => {
   try {
     const r = await fetch('/api/account/session', { credentials: 'include' });

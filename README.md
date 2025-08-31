@@ -7,16 +7,11 @@ It allows users to browse categories like Fruits, Vegetables, Meat, Snacks, etc.
 
 # Teck Stack
 
-**Frontend** 
-  - Html, CSS, Javascript, Figma (For UI design)
-**Backend** 
-  - Node.js, Express.js
-**DataBase** 
-  - MongoDB Atlas cluster
-**Platform** 
-  - Web
-**Version Control** 
-  - GitHub repo with contributions from all team members  
+- **Frontend:** Html, CSS, Javascript, Figma (For UI design)
+- **Backend:** Node.js, Express.js
+- **DataBase:** MongoDB Atlas cluster
+- **Platform:** Web
+- **Version Control:** GitHub repo with contributions from all team members  
 
 
 

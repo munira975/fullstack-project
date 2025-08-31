@@ -213,16 +213,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   try {
-    const res = await fetch('/api/account/session', { credentials: 'include' });
-    if (res.ok) {
-      const data = await res.json();
-      localStorage.setItem('email', data.email || '');
-      attachLogout(data.email || '');
-    } else {
-      setLoggedOutUI();
-    }
-  } catch (err) {
-    console.error('Fel vid kontroll av session:', err);
+  const res = await fetch('/api/account/session', { credentials: 'include' });
+  if (!res.ok) throw new Error('session check failed');
+  const data = await res.json();
+
+  if (data && data.authenticated) {
+    localStorage.setItem('email', data.email || '');
+    attachLogout(data.email || '');
+  } else {
     setLoggedOutUI();
   }
+} catch (err) {
+  console.error('Fel vid kontroll av session:', err);
+  setLoggedOutUI();
+}
+
 });

@@ -99,10 +99,16 @@ if (createForm) {
 (async () => {
   try {
     const r = await fetch('/api/account/session', { credentials: 'include' });
-    if (r.ok) {
-      const s = await r.json();
+    if (!r.ok) return;
+    const s = await r.json();
+
+    if (s && s.authenticated) {
       localStorage.setItem('email', s.email || '');
       localStorage.setItem('username', s.username || '');
+    } else {
+      localStorage.removeItem('email');
+      localStorage.removeItem('username');
     }
   } catch {}
 })();
+

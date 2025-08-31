@@ -99,14 +99,20 @@ router.post('/', async (req, res) => {
 /*Session*/
 router.get('/session', (req, res) => {
   const u = req.session?.user;
-  if (u?.email) return res.json({ email: u.email, username: u.username });
-  return sendErr(res, 401, 'Not signed in');
+  if (u?.email) return res.json({ authenticated: true, email: u.email, username: u.username });
+  return res.json({ authenticated: false });
 });
 
 /*Logout*/
 router.post('/logout', (req, res) => {
+  const secureCookies = String(process.env.SECURE_COOKIES || '').toLowerCase() === 'true';
   req.session.destroy(() => {
-    res.clearCookie(COOKIE_NAME);
+    res.clearCookie('sid', {
+      httpOnly: true,
+      sameSite: secureCookies ? 'none' : 'lax',
+      secure: secureCookies,
+      path: '/',          
+    });
     return res.json({ message: 'Logged out' });
   });
 });

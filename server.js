@@ -53,7 +53,7 @@ app.use(express.urlencoded({ extended: true }));
 
 /*Session cookie*/
 const SECURE_COOKIES = String(process.env.SECURE_COOKIES || '').toLowerCase() === 'true';
-if (SECURE_COOKIES) app.set('trust proxy', 1);
+if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
 
 app.use(session({
   name: 'sid',
